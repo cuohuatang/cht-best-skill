@@ -1,10 +1,11 @@
 ---
 name: cht-best-skill
-version: V0.0.1
 description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk and applies 10 agent-collaboration tactics. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / planning with files」时使用。"
 ---
 
 # Agent Playbook
+
+> 版本 **V0.0.1** · 全局技能 `cht-best-skill`
 
 一套系统的两半：**心法管怎么指挥，三文件管怎么记住。**
 
