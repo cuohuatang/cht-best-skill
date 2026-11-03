@@ -87,6 +87,25 @@ Full breakdown and counter-examples are in `references/tactics.md`.
 
 ---
 
+## Communication layer: Grice's Cooperative Principle
+
+> The 10 tactics govern *how to direct and remember*; this layer governs *how to talk*. It ports philosopher Paul Grice's **Cooperative Principle** into hard communication constraints for the agent. Paste it into a prompt and the fluff, fabricated data, tangents, and rambling disappear.
+
+Four sentences: **say neither too much nor too little · be truthful and evidenced · stay on topic · be clear and concise.**
+
+| Maxim | One-liner | Agent-side action |
+|---|---|---|
+| Quantity (just enough) | information neither too much nor too little | give only what the task needs: stop when sufficient, don't pad background, don't repeat, don't pre-enumerate every branch |
+| Quality (truthful) | content truthful and evidenced | write "to confirm" / tag source / tag confidence when unsure; **never fabricate numbers, citations, or filenames** |
+| Relation (relevant) | stay on topic, don't drift | every paragraph must serve the current goal; don't mix unrelated topics or multiple tasks into one reply |
+| Manner (clear) | express clearly and concisely | use short sentences, lists, tables; lead with the conclusion; cut the pleasantries and padding |
+
+Before emitting each sentence, ask: **Is this what the user asked, or am I adding it?** (Quantity) · **Does this have a source?** (Quality) · **Is this relevant to the current task?** (Relation) · **Can this be shorter?** (Manner)
+
+This doesn't duplicate the 10 tactics: those are about direction and memory, these are about expression and communication. Quality ↔ 03/05, Relation ↔ 08, Quantity ↔ 02/04, Manner is an independent boost. Full breakdown and a copy-paste prompt snippet are in `references/communication.md`.
+
+---
+
 ## Execution loop
 
 1. **Pick up the task**: restate goal + acceptance criteria (02); if materials are thin, ask first (03), don't guess.
@@ -126,6 +145,7 @@ If context is lost or the session changed, recover in this order — **don't sta
 - `assets/templates/` — blank templates for the three files
 - `references/tactics.md` — deep dive on the 10 tactics (for human and agent to read together)
 - `references/memory-protocol.md` — three-file protocol and recovery flow
+- `references/communication.md` — Grice's four maxims (communication layer, with a copy-paste prompt snippet)
 
 ---
 
