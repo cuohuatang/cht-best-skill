@@ -1,6 +1,6 @@
 # cht-best-skill
 
-> Version **V0.0.1** · Global skill `cht-best-skill`
+> Version **V0.0.2** · Global skill `cht-best-skill`
 
 A system in two halves: **the tactics tell the agent how to take direction, the three files tell it how to remember.**
 
@@ -17,6 +17,8 @@ This skill is for working with AI agents (CodeBuddy / Claude / Copilot-style age
 
 The 10 tactics come from Thorsten Ball (AMPCode engineering lead) and are reframed here as actions the agent should take, not slogans for the human to read.
 
+The skill is itself a product of the meta-skill system (M3 domain-load generation). V0.0.2 grafts three more meta-skill lenses onto it: an **enablement gate** (M1), an **IPO primitive-chain constraint** (M2), and a **six-operation action lexicon** (M4) — sharpening *when to use it* and *how to decompose*, without bloating it into a meta-skill.
+
 ---
 
 ## When to use
@@ -30,6 +32,20 @@ Enable this skill if any of these is true:
 - The user mentions tactics / "getting the most out of agents" / planning with files
 
 For small questions, single-turn Q&A, or pure chit-chat — **do not** enable this. Don't pile process on simple tasks.
+
+---
+
+## Enablement gate: three tiers (from M1 domain assessment)
+
+> Grafted from the meta-skill system's M1 — "eliminate rather than refactor". Turn "should I even enable this" from a hunch into a deterministic three-tier switch.
+
+| Tier | Trigger | Action |
+|---|---|---|
+| **Eliminate** (don't use this skill) | single-turn Q&A, pure chit-chat, trivial confirmation | skip entirely, zero files, don't pile process |
+| **Light** (only `progress.md`) | 2–3 steps, finishes same day, no fact accumulation | minimal version (see end of memory-protocol) |
+| **Full** (all three files) | cross-session / multi-step / needs fact accumulation | run init script, build task_plan + findings + progress |
+
+**Decision basis** (any one unmet downgrades): boundary clarity · step count · cross-session? · needs fact accumulation. Default to the lighter tier — don't enable if you can avoid it, don't go full if light suffices.
 
 ---
 
@@ -87,6 +103,20 @@ Full breakdown and counter-examples are in `references/tactics.md`.
 
 ---
 
+## Action primitives: the six-operation lexicon (from M4 execution axis)
+
+> Grafted from the meta-skill system's M4 — every action classifies into 6 meta-operations (S/C/A/O/I/G). Aligning the 10 tactics to this table gives the agent's actions a shared grammar for self-check.
+
+| Meta-op | Meaning | Maps to tactics |
+|---|---|---|
+| S Perceive / G Guard | acquire & verify info, hold boundaries | 03 what it can't see, 05 demand evidence |
+| C Cognize | judge & design options | 02 say what, 04 offer options |
+| A Act | execute & automate | 06 let go, 07 scheduled tasks |
+| O Organize | structure & memory management | 08 one job per conversation, 09 chat is memory |
+| I Interact | outward human collaboration | 10 write outward text yourself |
+
+---
+
 ## Communication layer: Grice's Cooperative Principle
 
 > The 10 tactics govern *how to direct and remember*; this layer governs *how to talk*. It ports philosopher Paul Grice's **Cooperative Principle** into hard communication constraints for the agent. Paste it into a prompt and the fluff, fabricated data, tangents, and rambling disappear.
@@ -106,13 +136,19 @@ This doesn't duplicate the 10 tactics: those are about direction and memory, the
 
 ---
 
-## Execution loop
+## Execution loop: IPO primitive chain (≤5 primitives, from M2)
+
+> Grafted from the meta-skill system's M2 — restructure the task into an end-to-end IPO (Input→Process→Output) primitive chain, cutting the "human-limitation compensation layer".
 
 1. **Pick up the task**: restate goal + acceptance criteria (02); if materials are thin, ask first (03), don't guess.
 2. **Persist**: run the init script, write the phases in `task_plan.md`.
 3. **Work**: advance one phase at a time, writing into `findings.md` / `progress.md` as you go.
 4. **Change phase**: update plan's "current phase" first, then act; write the phase conclusion into progress's decision log.
 5. **Deliver**: give evidence (05); mark parts that need human sign-off (10); finally update progress's next steps.
+
+**Two hard constraints**
+- **≤5 primitives**: any task breaks into at most 5 primitives; more means a compensation layer is still untrimmed — loop back with M2 thinking and keep cutting.
+- **Minimize cross-primitive handoff**: intermediate artifacts may stay as calibration anchors, but don't pile docs between primitives or hand off repeatedly.
 
 ---
 
