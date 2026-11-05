@@ -1,15 +1,15 @@
 ---
 name: cht-best-skill
-description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk and applies 10 agent-collaboration tactics, Grice-style communication and multi-AI debate verification. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / AI 辩论 / 交叉核验 / 核实 AI 答案 / planning with files」时使用。"
+description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk, enforces an ambition-upgrade gate (height/depth/breadth of the goal) and applies 10 agent-collaboration tactics, Grice-style communication and multi-AI debate verification. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / AI 辩论 / 交叉核验 / 核实 AI 答案 / 野心升级 / 高度深度广度 / 更高目标 / How to be more ambitious / planning with files」时使用。"
 ---
 
 # Agent Playbook
 
-> 版本 **V0.0.3** · 全局技能 `cht-best-skill`
+> 版本 **V0.0.4** · 全局技能 `cht-best-skill`
 
-一套系统的两半：**心法管怎么指挥，三文件管怎么记住。**
+一套系统的五层：**心法管怎么指挥，三文件管怎么记住，沟通层管怎么说，辩论层管怎么验，野心层管敢要什么。**
 
-> 心法决定它做得多好，文件决定它记得多久。
+> 心法决定它做得多好，文件决定它记得多久，沟通决定它说得多准，辩论决定它可不可信，**野心决定你敢不敢要一个真正的结果**。
 
 ## 什么时候用
 
@@ -35,13 +35,38 @@ description: "Use when a task is multi-step, long-running, or must survive conte
 
 **决策依据**（四项任一不满足即降级）：边界清晰度 · 步骤数 · 是否跨会话 · 是否需事实沉淀。默认往轻里选——能不启就不启，能轻量不全量。
 
+## 野心升级（接活前置 · 每次必做 · 硬闸门）
+
+> 来源：Claude 技术负责人《How to be more ambitious》——多数人用不出 AI 真实实力，**问题不在模型能力，而在目标给得太保守**。启用本技能后（消除档除外），**必须先过这一关，再开工**。
+
+三维度：**高度改目标、深度挖细节、广度补盲区。**
+
+| 维度 | 一句话 | 反面 → 高阶 |
+|---|---|---|
+| **高度** | 改目标，不改任务；锚定终极落地结果，让 AI 对结果全责 | 「改这 3 个 bug」→「应用保持零崩溃，连接报告系统，全程跟进彻底修复」 |
+| **深度** | 以顶尖专家标准要求；上传原始数据/日志，指定专业方法与**外部验证标准**，杜绝自评 | 「分析客户流失」→ 数据+统计模型核验，主动对抗既有假设、挖数据盲区 |
+| **广度** | 名词换动词（让谁在多短时间内做成什么决策）+ 多视角交叉审核、排查风险 | 「做季度复盘 PPT」→「让高管 30 分钟内理清因果、做出经营决策」 |
+
+**为什么是硬闸门**：只写成建议等于没写，Agent 长任务里必然滑回浅层执行。因此三维度已固化进 `task_plan.md` 模板的「0. 野心升级」区块——**每次跑 init 必然生成**，并由校验脚本强制：
+
+```bash
+python3 ~/.codebuddy/skills/cht-best-skill/scripts/verify_ambition.py "<任务目录>"
+# 退出码 0=通过；1=三维度未填完，阻断开工与交付
+```
+
+**三条红线**：① **不设角色人设**（"你是专家"拉高讨好属性；多视角靠交叉核验、不靠演角色）；② 不接受自评，必须有数据源 + 方法 + 外部验证标准；③ 三维度未填完不得进入阶段 1。
+
+> **与黄仁勋法的调和**：本教程说"邀请分析师/审计/编辑等视角"，与辩论层"从不给 AI 设角色"并不冲突——教程自身要求「输出可落地的查证动作，而非角色扮演台词」。所以"虚拟智囊团"= 多个独立视角交叉核验（即辩论层互驳的高阶版），各视角交出风险清单与反驳条，不是专家口吻的点评。
+
+详见 `references/ambition.md`（含三个可直接粘贴的通用模板、五条深挖要点、咬合表、反模式）。
+
 ## 第一步：把记忆落到磁盘
 
 ```bash
-python3 ~/.codebuddy/skills/agent-playbook/scripts/init_task.py "<任务名>" [--dir <工作目录>]
+python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [--dir <工作目录>]
 ```
 
-默认在当前目录建 `agent-tasks/<日期>-<任务名>/`，生成三个文件。目录不是重点，**三个文件必须存在**。
+默认在当前目录建 `agent-tasks/<日期>-<任务名>/`，生成三个文件；脚本会自动提示「野心升级三维度待填」并给出校验命令。目录不是重点，**三个文件必须存在**。
 
 | 文件 | 谁写、何时写 | 必须包含 |
 |---|---|---|
@@ -131,14 +156,15 @@ python3 ~/.codebuddy/skills/agent-playbook/scripts/init_task.py "<任务名>" [-
 
 > 嫁接自元技能系统的 M2 工作流重构——把任务重整为端到端 IPO（输入→处理→输出）基元链，砍掉"人的局限补偿层"。
 
+0. **野心升级（前置）**：把浅层指令改写为高度/深度/广度三维度，填进 `task_plan.md`「0. 野心升级」，跑 `verify_ambition.py` 通过（退出码 0）才准往下走。消除档任务跳过此步。
 1. **接活**：复述目标与验收标准（02）；材料不够先要（03），别猜。
 2. **落盘**：跑 init 脚本，写 `task_plan.md` 的阶段。
 3. **开工**：一次推进一个阶段，边做边往 `findings.md` / `progress.md` 写。
 4. **换阶段**：先更新 plan 的"当前阶段"，再动手；阶段结论写进 progress 的决策记录。
-5. **交付**：给证据（05）；需要人定稿的部分明确标注（10）；最后更新 progress 的下一步。
+5. **交付**：给证据（05）；需要人定稿的部分明确标注（10）；最后更新 progress 的下一步。**交付前再跑一次 `verify_ambition.py`**。
 
 **两条硬约束**
-- **基元数 ≤5**：任一任务拆到不超过 5 个基元；超过说明还有"补偿层"没消干净，回炉用 M2 思路继续砍。
+- **基元数 ≤5**：任一任务拆到不超过 5 个基元（第 0 步为前置闸门，不计入）；超过说明还有"补偿层"没消干净，回炉用 M2 思路继续砍。
 - **跨基元传递最小化**：中间产物可保留作校准点（纠偏锚点），但不在基元间堆文档、不反复交接。
 
 ## 中断了怎么接着干
@@ -159,12 +185,18 @@ python3 ~/.codebuddy/skills/agent-playbook/scripts/init_task.py "<任务名>" [-
 - 全推倒重来替代小步修正（违反 04）
 - 不写 progress，中断后从零开始（违反 09）
 - 直接对外发出未定稿的敏感文字（违反 10）
+- 只改措辞不改责任，把"改 3 个 bug"包装成"专业地改 3 个 bug"（伪高度）
+- 让 AI 自己判断"分析够不够深"（违反外部验证，深度层红线）
+- 把"邀请专家"写成一段专家口吻点评，没有风险清单（角色扮演，广度层红线）
+- 野心升级三维度没填完就开工，或交付前没跑 `verify_ambition.py`（绕过硬闸门）
 
 ## 文件
 
-- `scripts/init_task.py` — 一键生成三文件骨架
-- `assets/templates/` — 三个文件的空白模板
+- `scripts/init_task.py` — 一键生成三文件骨架（含野心升级区块与校验提示）
+- `scripts/verify_ambition.py` — 野心升级硬闸门：三维度未填完退出码 1
+- `assets/templates/` — 三个文件的空白模板（task_plan 内置「0. 野心升级」）
 - `references/tactics.md` — 10 条心法详解（给人和 Agent 共读）
 - `references/memory-protocol.md` — 三文件协议与恢复流程
 - `references/communication.md` — 格赖斯合作原则四准则（沟通层，含可直接粘贴的提示词片段）
 - `references/debate.md` — 黄仁勋 AI 辩论核验法（辩论层：自查→互驳→裁决，含三条即用提示词）
+- `references/ambition.md` — 高度/深度/广度三维度详解（野心层，含三个通用模板与角色冲突调和）

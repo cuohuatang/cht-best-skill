@@ -62,7 +62,27 @@ def main() -> int:
         print(f"  + {f}")
     for f in skipped:
         print(f"  = {f} 已存在，跳过（--force 可覆盖）")
-    print("\n下一步：填 task_plan.md 的目标与验收标准，再开工。")
+
+    # 接活前置：每次生成都把「野心升级」闸门递到手上（刚生成必然待填，故不阻断）
+    try:
+        from verify_ambition import check_plan
+    except ImportError:  # 兼容单独拷走本脚本的场景
+        check_plan = None
+
+    plan = task_dir / "task_plan.md"
+    verify_cmd = f"python3 {SKILL_ROOT / 'scripts' / 'verify_ambition.py'} \"{task_dir}\""
+    if check_plan and plan.is_file():
+        ok, results = check_plan(plan)
+        if ok:
+            print("\n[野心升级] 三维度已填写 ✓")
+        else:
+            print("\n[接活前置·必做] 野心升级三维度待填（预期状态，未填不得开工）:")
+            for dim, passed, note in results:
+                print(f"    - {dim}: {note}")
+            print("  ① 填 task_plan.md「0. 野心升级」的高度/深度/广度三项")
+            print("  ② 校验通过后再填目标与验收标准，进入阶段 1")
+            print(f"  ③ 校验命令：{verify_cmd}")
+    print("\n下一步：先完成上面的野心升级，再填目标与验收标准，然后开工。")
     return 0
 
 
