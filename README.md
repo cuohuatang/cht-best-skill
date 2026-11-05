@@ -1,6 +1,6 @@
 # cht-best-skill
 
-> Version **V0.0.2** · Global skill `cht-best-skill`
+> Version **V0.0.3** · Global skill `cht-best-skill`
 
 A system in two halves: **the tactics tell the agent how to take direction, the three files tell it how to remember.**
 
@@ -136,6 +136,23 @@ This doesn't duplicate the 10 tactics: those are about direction and memory, the
 
 ---
 
+## Debate layer: adversarial verification (three gates for every answer)
+
+> Source: Jensen Huang's AI usage — he never assigns roles to AI and never trusts ready-made answers. AI has built-in sycophancy: ask along its own logic and you get errors that agree with you. Swap "believe one answer" for "make answers fight each other" — the human keeps **questioning and decision rights**.
+
+**Three steps**: ① **Self-check** — push back on the first answer, force it to find its own holes; ② **Cross-examine** — hand the conclusion to two other AIs (or fresh sessions) to pick faults and expose hard flaws; ③ **Arbitrate** — compare both sides' strengths and hard flaws; the human filters and distills.
+
+**Two taboos**: no role-playing ("you are an expert in X" raises sycophancy); never trust ready-made answers (high-stakes conclusions must pass all three gates).
+
+**Three ready-to-paste prompts**:
+1. Are you sure this is the best answer you can give? Check yourself carefully; find the holes, errors, and logical flaws in your response.
+2. Please review the following AI conclusion; itemize the factual errors and logical blind spots and rebut them: [paste the AI answer]
+3. Compare the two AI positions; objectively lay out each side's strengths and hard flaws; stay neutral, no favoritism.
+
+How it meshes: 03 governs **input** (give real context), debate governs **output** (adversarial verification); the hard-flaw list from cross-examination is the strongest form of 05's evidence; arbitration stays human (10). Full breakdown in `references/debate.md`.
+
+---
+
 ## Execution loop: IPO primitive chain (≤5 primitives, from M2)
 
 > Grafted from the meta-skill system's M2 — restructure the task into an end-to-end IPO (Input→Process→Output) primitive chain, cutting the "human-limitation compensation layer".
@@ -182,6 +199,7 @@ If context is lost or the session changed, recover in this order — **don't sta
 - `references/tactics.md` — deep dive on the 10 tactics (for human and agent to read together)
 - `references/memory-protocol.md` — three-file protocol and recovery flow
 - `references/communication.md` — Grice's four maxims (communication layer, with a copy-paste prompt snippet)
+- `references/debate.md` — Jensen Huang's AI debate verification (debate layer: self-check → cross-examine → arbitrate, with three ready-to-paste prompts)
 
 ---
 

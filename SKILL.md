@@ -1,11 +1,11 @@
 ---
 name: cht-best-skill
-description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk and applies 10 agent-collaboration tactics. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / planning with files」时使用。"
+description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk and applies 10 agent-collaboration tactics, Grice-style communication and multi-AI debate verification. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / AI 辩论 / 交叉核验 / 核实 AI 答案 / planning with files」时使用。"
 ---
 
 # Agent Playbook
 
-> 版本 **V0.0.2** · 全局技能 `cht-best-skill`
+> 版本 **V0.0.3** · 全局技能 `cht-best-skill`
 
 一套系统的两半：**心法管怎么指挥，三文件管怎么记住。**
 
@@ -89,6 +89,21 @@ python3 ~/.codebuddy/skills/agent-playbook/scripts/init_task.py "<任务名>" [-
 
 它和 10 条心法不重复：心法偏"指挥与记忆"，合作原则偏"表达与沟通"。其中 质量↔03/05、关系↔08、数量↔02/04、方式独立补强。完整解读与提示词片段见 `references/communication.md`。
 
+## 辩论层：AI 辩论核验（让答案过三道关）
+
+> 来源：黄仁勋的 AI 用法——从不给 AI 设角色，也不信现成答案。AI 自带讨好属性，顺着问只会得到顺着你来的错误；把"相信一个答案"换成"让几个答案互相打架"，人只留**提问权和裁决权**。
+
+**三步流程**：① **自查**——拿到答案先反问，逼它找出自己的漏洞；② **互驳**——交给另外两个 AI 互相挑错、揭硬伤；③ **裁决**——对比双方优劣，人自己筛选提炼。
+
+**两条禁忌**：不设角色（"你是某某专家"会拉高讨好属性）；不信现成答案（高利害结论必须过三道关）。
+
+**三条即用提示词**：
+1. 你确定这是你能给出的最佳答案吗？仔细自查，找出回答里的漏洞、错误和逻辑缺陷
+2. 请仔细审查以下 AI 结论，逐条找出事实错误、逻辑盲区并进行反驳：【粘贴 AI 回答原文】
+3. 对比两份 AI 观点，客观梳理双方的优势与硬伤，保持中立不偏袒
+
+与心法的咬合：03 管输入给真上下文，辩论管输出做对抗核验；互驳产出的"硬伤清单"就是 05 要的证据；裁决权在人，对应 10。完整解读见 `references/debate.md`。
+
 ## 心法与文件的咬合
 
 | 心法 | 落到 |
@@ -152,3 +167,4 @@ python3 ~/.codebuddy/skills/agent-playbook/scripts/init_task.py "<任务名>" [-
 - `references/tactics.md` — 10 条心法详解（给人和 Agent 共读）
 - `references/memory-protocol.md` — 三文件协议与恢复流程
 - `references/communication.md` — 格赖斯合作原则四准则（沟通层，含可直接粘贴的提示词片段）
+- `references/debate.md` — 黄仁勋 AI 辩论核验法（辩论层：自查→互驳→裁决，含三条即用提示词）
