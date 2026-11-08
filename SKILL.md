@@ -1,15 +1,15 @@
 ---
 name: cht-best-skill
-description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk, enforces an ambition-upgrade gate (height/depth/breadth of the goal) and applies 10 agent-collaboration tactics, Grice-style communication and multi-AI debate verification. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / AI 辩论 / 交叉核验 / 核实 AI 答案 / 野心升级 / 高度深度广度 / 更高目标 / How to be more ambitious / planning with files」时使用。"
+description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk, enforces an ambition-upgrade gate (height/depth/breadth of the goal), can spin up a 3-5 role Emperor Team orchestration engine (pstack: hire/dispatch/handoff/capture/review/verify), and applies 10 agent-collaboration tactics, Grice-style communication and multi-AI debate verification. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / AI 辩论 / 交叉核验 / 核实 AI 答案 / 野心升级 / 高度深度广度 / 帝王团队 / AI 人事 / 造 AI 员工 / 搭班子 / pstack / 编排 AI 团队 / 三才 / 张良韩信萧何 / How to be more ambitious / planning with files」时使用。"
 ---
 
 # Agent Playbook
 
-> 版本 **V0.0.4** · 全局技能 `cht-best-skill`
+> 版本 **V0.0.5** · 全局技能 `cht-best-skill`
 
-一套系统的五层：**心法管怎么指挥，三文件管怎么记住，沟通层管怎么说，辩论层管怎么验，野心层管敢要什么。**
+一套系统的六层：**心法管怎么指挥、三文件管怎么记住、沟通层管怎么说、辩论层管怎么验、野心层管敢要什么、帝王团队层管让一队 AI 真把活干出来。**
 
-> 心法决定它做得多好，文件决定它记得多久，沟通决定它说得多准，辩论决定它可不可信，**野心决定你敢不敢要一个真正的结果**。
+> 心法决定它做得多好，文件决定它记得多久，沟通决定它说得多准，辩论决定它可不可信，野心决定你敢不敢要一个真正的结果，**组织决定这个结果有没有人真去干**。
 
 ## 什么时候用
 
@@ -20,6 +20,7 @@ description: "Use when a task is multi-step, long-running, or must survive conte
 - 任务涉及调研、数据、多方案对比，事实需要在过程中沉淀
 - 用户明确要求"做个计划""记下来""别忘了""接着上次继续"
 - 用户提到心法、Agent 用到极致、planning with files
+- 用户要"造 AI 员工 / 搭班子 / 帝王团队 / pstack / 让 AI 自己找人干活"——**启用组织层**
 
 小问题、单轮问答、纯闲聊——**不要**启用，别给用户堆流程。
 
@@ -32,8 +33,9 @@ description: "Use when a task is multi-step, long-running, or must survive conte
 | **消除档**（不用本技能）| 单轮问答、纯闲聊、琐碎确认 | 直接跳过，零文件，别堆流程 |
 | **轻量档**（只建 `progress.md`）| 2–3 步、当天能完、无需沉淀事实 | 最小可用版（见 memory-protocol 末尾） |
 | **完整档**（三文件全开）| 跨会话 / 多步骤 / 需沉淀事实 | 跑 init 脚本，建 task_plan + findings + progress |
+| **组织档**（完整档 + 帝王团队）| 需要多个角色分工、递归招人、自动流转、技能沉淀、定期查岗 | 在完整档之上再跑 `pstack.py init`，按七条实操组团派活 |
 
-**决策依据**（四项任一不满足即降级）：边界清晰度 · 步骤数 · 是否跨会话 · 是否需事实沉淀。默认往轻里选——能不启就不启，能轻量不全量。
+**决策依据**（四项任一不满足即降级）：边界清晰度 · 步骤数 · 是否跨会话 · 是否需事实沉淀。默认往轻里选——能不启就不启，能轻量不全量。**组织档是可选加层，琐碎任务绝不组团**（流程比活还重）。
 
 ## 野心升级（接活前置 · 每次必做 · 硬闸门）
 
@@ -59,6 +61,39 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/verify_ambition.py "<任务�
 > **与黄仁勋法的调和**：本教程说"邀请分析师/审计/编辑等视角"，与辩论层"从不给 AI 设角色"并不冲突——教程自身要求「输出可落地的查证动作，而非角色扮演台词」。所以"虚拟智囊团"= 多个独立视角交叉核验（即辩论层互驳的高阶版），各视角交出风险清单与反驳条，不是专家口吻的点评。
 
 详见 `references/ambition.md`（含三个可直接粘贴的通用模板、五条深挖要点、咬合表、反模式）。
+
+## 帝王团队层：组织层（让一队 AI 真把活干出来）
+
+> 原型：Lauren Tan（SpaceX / Grok Bot 工程负责人）"不把 AI 当工具，而是组建智能体团队，人管目标、AI 落地执行"的七条方法 + 三层架构 + pstack。用户重构成**刘邦式治理**：刘邦（人）只定方向搭班子，张良（天才）用脑、韩信（地才）打仗、萧何（人才）管后方，三才各自再招人。
+> **这一层解决的正是"不是一个壳"**：前面各层管单个 Agent 怎么想/说/记/验/要，这一层由 `scripts/pstack.py` 把组织状态落盘、流转靠命令、边界靠闸门——**能真跑，不是文档**。
+
+**三层 / 三才**
+
+| 帝王位 | 三才 | 职责 |
+|---|---|---|
+| **刘邦**（人）| 调度者 | 只定方向、搭班子、审结果；不亲自干活、不做传话筒 |
+| **张良** | 天才·决策层 | 理解任务、拆分派发、定验收、跟进度；不写执行产物 |
+| **韩信** | 地才·执行层 | 真干活、产出可点开的证据；可招 10-20 个专项临时实例 |
+| **萧何** | 人才·编排层 | 三文件记忆、技能库、验证护栏、后勤；可招账房/校验员 |
+
+**七条实操 → 可执行动作**：① AI 人事造人（`init`/`hire`/`onboard` 五问/`review` 查岗）→ ② **3-5 常设岗硬上限**（第 6 个 `hire` 直接拒绝）→ ③ 先自报家门再问"咱俩怎么搭手"（`ONBOARDING.md`，未填则 `dispatch` 被拒）→ ④ 干成事儿立刻 `capture` 存技能、`reuse` 复用 → ⑤ 每角色独立 `outbox/`/`inbox/` → ⑥ `handoff` **真的把上游产物复制进下游 inbox**，杜绝人工搬运 → ⑦ 语音倒背景 + "用你话复述一遍"（复述确认门）。
+
+**为什么不是壳**：`manifest.json` 是机器可读唯一事实源（花名册/任务台账/技能库/流转记录/查岗记录），`verify_team.py` 是硬闸门（3-5 岗、三才齐备、职责契约五字段、独立 outbox、定时合法、入职契约已确认、done 必有证据），未通过退出码 1 阻断派工与交付。
+
+```bash
+P=~/.codebuddy/skills/cht-best-skill/scripts
+python3 $P/pstack.py init                      # 组团（三才常设岗 + 独立输出区）
+python3 $P/pstack.py onboard                   # 自报家门 + 怎么搭手 + 复述确认
+python3 $P/verify_team.py ./agent-team || exit 1
+python3 $P/pstack.py dispatch --to hanxin --task "..." --acceptance "..."
+python3 $P/pstack.py handoff --from hanxin --to xiaohe   # 自动流转，别手动搬
+python3 $P/pstack.py capture --name "XX流程" --from-task T001 --method "1... 2..."
+python3 $P/pstack.py review                    # 定期查岗迭代
+```
+
+> **职责契约 ≠ 角色人设**（与辩论层"从不设角色"、野心层"不演专家"的调和）：`PROFILE.md` 写的是**接口字段**（输入/输出/验收/汇报/定时/上下游），"张良"只是槽位 ID；禁止"你是天才战略家"这类形容词。招的是岗位，不是演员。校验器只查字段完整性，从不查"像不像张良"。
+
+详见 `references/emperor-team.md`（三层架构、七条映射表、递归分工、3-5 常设岗 vs 临时执行实例、与六层咬合、Agent 可执行协议、反模式）。
 
 ## 第一步：把记忆落到磁盘
 
@@ -157,15 +192,16 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 > 嫁接自元技能系统的 M2 工作流重构——把任务重整为端到端 IPO（输入→处理→输出）基元链，砍掉"人的局限补偿层"。
 
 0. **野心升级（前置）**：把浅层指令改写为高度/深度/广度三维度，填进 `task_plan.md`「0. 野心升级」，跑 `verify_ambition.py` 通过（退出码 0）才准往下走。消除档任务跳过此步。
+0.5. **组团（组织档才做）**：需多角色分工时跑 `pstack.py init` → 填 `ONBOARDING.md` → `verify_team.py` 通过 → 张良拆分派工 → `handoff` 自动流转 → `capture` 沉淀 → `review` 查岗。琐碎任务不做。
 1. **接活**：复述目标与验收标准（02）；材料不够先要（03），别猜。
 2. **落盘**：跑 init 脚本，写 `task_plan.md` 的阶段。
 3. **开工**：一次推进一个阶段，边做边往 `findings.md` / `progress.md` 写。
 4. **换阶段**：先更新 plan 的"当前阶段"，再动手；阶段结论写进 progress 的决策记录。
-5. **交付**：给证据（05）；需要人定稿的部分明确标注（10）；最后更新 progress 的下一步。**交付前再跑一次 `verify_ambition.py`**。
+5. **交付**：给证据（05）；需要人定稿的部分明确标注（10）；最后更新 progress 的下一步。**交付前再跑一次 `verify_ambition.py`；组织档再跑 `verify_team.py`**。
 
 **两条硬约束**
-- **基元数 ≤5**：任一任务拆到不超过 5 个基元（第 0 步为前置闸门，不计入）；超过说明还有"补偿层"没消干净，回炉用 M2 思路继续砍。
-- **跨基元传递最小化**：中间产物可保留作校准点（纠偏锚点），但不在基元间堆文档、不反复交接。
+- **基元数 ≤5**：任一任务拆到不超过 5 个基元（第 0 / 0.5 步为前置闸门，不计入）；超过说明还有"补偿层"没消干净，回炉用 M2 思路继续砍。
+- **跨基元传递最小化**：中间产物可保留作校准点（纠偏锚点），但不在基元间堆文档、不反复交接；组织档一律走 `handoff`，**绝不人工搬运**。
 
 ## 中断了怎么接着干
 
@@ -189,14 +225,23 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 - 让 AI 自己判断"分析够不够深"（违反外部验证，深度层红线）
 - 把"邀请专家"写成一段专家口吻点评，没有风险清单（角色扮演，广度层红线）
 - 野心升级三维度没填完就开工，或交付前没跑 `verify_ambition.py`（绕过硬闸门）
+- 花名册塞十几个半吊子 AI（组织层上限拒绝，"不在多在精"）
+- 一上来就 `dispatch`，没填 `ONBOARDING.md`、没让 AI 复述（派工被拒）
+- 自己复制粘贴把 A 的产物发给 B（当传话筒，应该用 `handoff`）
+- 干完不 `capture`，下次从头教；所有 AI 共用一个输出目录（无法排查）
+- 给 AI 写"你是天才战略家"这类人设形容词（角色扮演，职责契约层红线）
+- 琐碎任务也组团（违反 M1 启用闸门，流程比活还重）
 
 ## 文件
 
 - `scripts/init_task.py` — 一键生成三文件骨架（含野心升级区块与校验提示）
 - `scripts/verify_ambition.py` — 野心升级硬闸门：三维度未填完退出码 1
+- `scripts/pstack.py` — **帝王团队编排引擎**（组织层可执行内核：init/hire/onboard/dispatch/handoff/capture/reuse/review/verify/status）
+- `scripts/verify_team.py` — 团队硬闸门（3-5 岗、三才齐备、职责契约、身份隔离、复述确认）
 - `assets/templates/` — 三个文件的空白模板（task_plan 内置「0. 野心升级」）
 - `references/tactics.md` — 10 条心法详解（给人和 Agent 共读）
 - `references/memory-protocol.md` — 三文件协议与恢复流程
 - `references/communication.md` — 格赖斯合作原则四准则（沟通层，含可直接粘贴的提示词片段）
 - `references/debate.md` — 黄仁勋 AI 辩论核验法（辩论层：自查→互驳→裁决，含三条即用提示词）
 - `references/ambition.md` — 高度/深度/广度三维度详解（野心层，含三个通用模板与角色冲突调和）
+- `references/emperor-team.md` — 帝王团队详解（组织层：三层架构/三才、七条映射表、递归分工、职责契约≠人设、可执行协议）

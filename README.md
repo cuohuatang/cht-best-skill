@@ -1,10 +1,10 @@
 # cht-best-skill
 
-> Version **V0.0.4** · Global skill `cht-best-skill`
+> Version **V0.0.5** · Global skill `cht-best-skill`
 
-A system in five layers: **tactics** govern how the agent takes direction, **three files** how it remembers, the **communication layer** how it speaks, the **debate layer** how claims get verified, and the **ambition layer** how bold a result you dare to ask for.
+A system in six layers: **tactics** govern how the agent takes direction, **three files** how it remembers, the **communication layer** how it speaks, the **debate layer** how claims get verified, the **ambition layer** how bold a result you dare to ask for, and the **Emperor Team layer** how a *team of AIs* actually gets the work done.
 
-> Tactics decide how well it works; files decide how long it remembers; communication how precise it speaks; debate how trustworthy it is; **ambition whether you dare ask for a real outcome**.
+> Tactics decide how well it works; files decide how long it remembers; communication how precise it speaks; debate how trustworthy it is; ambition whether you dare ask for a real outcome — **organization decides whether anyone actually goes and does it**.
 
 ---
 
@@ -17,7 +17,7 @@ This skill is for working with AI agents (CodeBuddy / Claude / Copilot-style age
 
 The 10 tactics come from Thorsten Ball (AMPCode engineering lead) and are reframed here as actions the agent should take, not slogans for the human to read.
 
-The skill is itself a product of the meta-skill system (M3 domain-load generation). V0.0.2 grafted three meta-skill lenses onto it: an **enablement gate** (M1), an **IPO primitive-chain constraint** (M2), and a **six-operation action lexicon** (M4) — sharpening *when to use it* and *how to decompose*. V0.0.3 added the **debate layer**. V0.0.4 adds the **ambition layer** as a hard, script-enforced gate: height / depth / breadth of every goal, checked before any work begins.
+The skill is itself a product of the meta-skill system (M3 domain-load generation). V0.0.2 grafted three meta-skill lenses onto it: an **enablement gate** (M1), an **IPO primitive-chain constraint** (M2), and a **six-operation action lexicon** (M4). V0.0.3 added the **debate layer**. V0.0.4 added the **ambition layer** as a hard, script-enforced gate. **V0.0.5 adds the Emperor Team layer — an executable orchestration engine (`pstack.py`), not another essay**: team state on disk, handoffs by command, boundaries by a hard gate.
 
 ---
 
@@ -30,6 +30,7 @@ Enable this skill if any of these is true:
 - The task involves research, data, or comparing multiple options where facts must accumulate
 - The user explicitly asks to "make a plan", "write this down", "don't forget", or "continue from last time"
 - The user mentions tactics / "getting the most out of agents" / planning with files
+- The user wants to "hire AI employees / build a team / Emperor Team / pstack / let AIs recruit and delegate" — **enable the organization layer**
 
 For small questions, single-turn Q&A, or pure chit-chat — **do not** enable this. Don't pile process on simple tasks.
 
@@ -44,8 +45,9 @@ For small questions, single-turn Q&A, or pure chit-chat — **do not** enable th
 | **Eliminate** (don't use this skill) | single-turn Q&A, pure chit-chat, trivial confirmation | skip entirely, zero files, don't pile process |
 | **Light** (only `progress.md`) | 2–3 steps, finishes same day, no fact accumulation | minimal version (see end of memory-protocol) |
 | **Full** (all three files) | cross-session / multi-step / needs fact accumulation | run init script, build task_plan + findings + progress |
+| **Org tier** (Full + Emperor Team) | needs multiple roles, recursive hiring, auto handoff, skill capture, periodic review | additionally run `pstack.py init` and dispatch via the seven practices |
 
-**Decision basis** (any one unmet downgrades): boundary clarity · step count · cross-session? · needs fact accumulation. Default to the lighter tier — don't enable if you can avoid it, don't go full if light suffices.
+**Decision basis** (any one unmet downgrades): boundary clarity · step count · cross-session? · needs fact accumulation. Default to the lighter tier — don't enable if you can avoid it, don't go full if light suffices. **The org tier is an optional add-on; never spin up a team for trivial tasks** (process heavier than the work).
 
 ---
 
@@ -73,6 +75,41 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/verify_ambition.py "<task dir
 > **Reconciling with the debate layer**: this tutorial says "invite analysts, auditors, senior editors", while Jensen Huang's method says "never assign roles". No conflict — the tutorial itself demands *actionable verification steps, not role-play lines*. The "virtual brain trust" is **multiple independent perspectives cross-examining** (the higher-order form of debate-layer cross-examination), each producing a risk list and rebuttals, not expert-toned commentary.
 
 Full breakdown, three paste-ready templates, five depth tactics, mapping table and anti-patterns: `references/ambition.md`.
+
+---
+
+## Emperor Team layer: the organization layer (make a team of AIs actually work)
+
+> Prototype: Lauren Tan (SpaceX / Grok Bot engineering lead) — "don't use AI as a tool, build an agent team; humans own the goal, AIs deliver" — seven practices + a three-tier architecture + the open-source `pstack` orchestrator. Reframed here as **imperial governance**: Liu Bang (the human) only sets direction and staffs the team; Zhang Liang (genius) thinks, Han Xin (talent) fights, Xiao He (steward) runs the rear, and each of the three recruits their own people.
+> **This layer is the answer to "not just a shell"**: earlier layers govern how a *single* agent thinks / speaks / remembers / verifies / aims. This one is `scripts/pstack.py` — team state on disk, handoffs by command, boundaries by a hard gate. **It runs.**
+
+**Three tiers / three talents**
+
+| Imperial seat | Talent | Duty |
+|---|---|---|
+| **Liu Bang** (human) | Director | sets direction, staffs the team, reviews results; does no work, is no relay, is no strategist |
+| **Zhang Liang** | Genius · decision tier | understand, decompose into dispatchable subtasks, set acceptance, track progress; writes no deliverables |
+| **Han Xin** | Field talent · execution tier | actually produces openable evidence; may recruit 10–20 temporary specialist instances |
+| **Xiao He** | Steward · orchestration tier | three-file memory, skill library, verification guardrails, logistics; may recruit bookkeepers / validators |
+
+**Seven practices → executable actions**: ① AI-HR creates roles (`init` / `hire` / `onboard` five questions / `review`) → ② **hard cap of 3–5 standing roles** (a 6th `hire` is refused) → ③ introduce yourself before asking "how should we collaborate" (`ONBOARDING.md`; dispatch is blocked until filled) → ④ `capture` a method the moment a job succeeds, `reuse` it later → ⑤ independent `outbox/` + `inbox/` per role → ⑥ `handoff` **actually copies upstream artifacts into the downstream inbox**, killing manual relay → ⑦ speak the context, then "restate it in your own words" (restate gate).
+
+**Why it isn't a shell**: `manifest.json` is the machine-readable single source of truth (roster / task ledger / skill library / handoff log / review log); `verify_team.py` is a hard gate (3–5 roles, all three talents present, five duty-contract fields, isolated outbox, valid schedule, onboarding confirmed, `done` requires evidence). A failing gate returns exit 1 and blocks dispatch and delivery.
+
+```bash
+P=~/.codebuddy/skills/cht-best-skill/scripts
+python3 $P/pstack.py init                      # staff the three talents + isolated output areas
+python3 $P/pstack.py onboard                   # introduce yourself + collaboration + restate gate
+python3 $P/verify_team.py ./agent-team || exit 1
+python3 $P/pstack.py dispatch --to hanxin --task "..." --acceptance "..."
+python3 $P/pstack.py handoff --from hanxin --to xiaohe   # auto relay, never manual
+python3 $P/pstack.py capture --name "workflow" --from-task T001 --method "1... 2..."
+python3 $P/pstack.py review                    # periodic performance review
+```
+
+> **Duty contract ≠ persona** (reconciling with the debate layer's "never assign roles" and the ambition layer's "no role-play"): `PROFILE.md` holds **interface fields** (inputs / outputs / acceptance / reports-to / schedule / up-downstream); "Zhang Liang" is only a slot ID. Adjectives like "you are a genius strategist" are forbidden. We hire posts, not actors — the checker validates field completeness and never asks "does it sound like Zhang Liang".
+
+Full breakdown (three-tier architecture, seven-practice mapping, recursive delegation, 3–5 standing roles vs temporary instances, mapping to all six layers, agent-executable protocol, anti-patterns): `references/emperor-team.md`.
 
 ---
 
@@ -185,15 +222,16 @@ How it meshes: 03 governs **input** (give real context), debate governs **output
 > Grafted from the meta-skill system's M2 — restructure the task into an end-to-end IPO (Input→Process→Output) primitive chain, cutting the "human-limitation compensation layer".
 
 0. **Ambition upgrade (pre-flight)**: rewrite the shallow request into height / depth / breadth, fill them into `task_plan.md` "0. Ambition upgrade", and pass `verify_ambition.py` (exit 0) before proceeding. Eliminate-tier tasks skip this step.
+0.5. **Staff the team (org tier only)**: `pstack.py init` → fill `ONBOARDING.md` → pass `verify_team.py` → Zhang Liang decomposes and dispatches → `handoff` auto-relays → `capture` distills → `review` audits. Never for trivial tasks.
 1. **Pick up the task**: restate goal + acceptance criteria (02); if materials are thin, ask first (03), don't guess.
 2. **Persist**: run the init script, write the phases in `task_plan.md`.
 3. **Work**: advance one phase at a time, writing into `findings.md` / `progress.md` as you go.
 4. **Change phase**: update plan's "current phase" first, then act; write the phase conclusion into progress's decision log.
-5. **Deliver**: give evidence (05); mark parts that need human sign-off (10); finally update progress's next steps. **Re-run `verify_ambition.py` before delivery.**
+5. **Deliver**: give evidence (05); mark parts that need human sign-off (10); finally update progress's next steps. **Re-run `verify_ambition.py`; for org tier also `verify_team.py`.**
 
 **Two hard constraints**
-- **≤5 primitives**: any task breaks into at most 5 primitives (step 0 is a pre-flight gate, not counted); more means a compensation layer is still untrimmed — loop back with M2 thinking and keep cutting.
-- **Minimize cross-primitive handoff**: intermediate artifacts may stay as calibration anchors, but don't pile docs between primitives or hand off repeatedly.
+- **≤5 primitives**: any task breaks into at most 5 primitives (steps 0 / 0.5 are pre-flight gates, not counted); more means a compensation layer is still untrimmed — loop back with M2 thinking and keep cutting.
+- **Minimize cross-primitive handoff**: intermediate artifacts may stay as calibration anchors, but don't pile docs between primitives or hand off repeatedly; in the org tier always use `handoff` — **never manual relay**.
 
 ---
 
@@ -221,6 +259,12 @@ If context is lost or the session changed, recover in this order — **don't sta
 - Letting the AI judge whether its own analysis is "deep enough" — violates external validation
 - Writing an expert-toned paragraph instead of a risk list — role-play, not breadth
 - Starting before all three ambition dimensions are filled, or skipping `verify_ambition.py` at delivery — bypassing the hard gate
+- Stuffing a dozen half-baked AIs into the roster (org-tier cap refuses them; "few well-tuned, not many mediocre")
+- Dispatching immediately without `ONBOARDING.md` or the restate check (blocked)
+- Copy-pasting A's output to B yourself (being a relay — should use `handoff`)
+- Never `capture`-ing a finished job, re-teaching next time; all AIs sharing one output dir (no traceability)
+- Writing persona adjectives like "you are a genius strategist" (role-play, red line of the duty-contract layer)
+- Spinning up a team for a trivial task (violates the M1 enablement gate — process heavier than the work)
 
 ---
 
@@ -228,12 +272,15 @@ If context is lost or the session changed, recover in this order — **don't sta
 
 - `scripts/init_task.py` — one command to seed the three-file skeleton (includes the ambition block + checker hint)
 - `scripts/verify_ambition.py` — ambition hard gate: exit 1 when any dimension is incomplete
+- `scripts/pstack.py` — **Emperor Team orchestration engine** (executable org-layer kernel: init / hire / onboard / dispatch / handoff / capture / reuse / review / verify / status)
+- `scripts/verify_team.py` — team hard gate (3–5 roles, three talents, duty contracts, identity isolation, restate confirmation)
 - `assets/templates/` — blank templates for the three files (task_plan carries "0. Ambition upgrade")
 - `references/tactics.md` — deep dive on the 10 tactics (for human and agent to read together)
 - `references/memory-protocol.md` — three-file protocol and recovery flow
 - `references/communication.md` — Grice's four maxims (communication layer, with a copy-paste prompt snippet)
 - `references/debate.md` — Jensen Huang's AI debate verification (debate layer: self-check → cross-examine → arbitrate, with three ready-to-paste prompts)
 - `references/ambition.md` — height / depth / breadth deep dive (ambition layer, with three paste-ready templates and the role-conflict reconciliation)
+- `references/emperor-team.md` — Emperor Team deep dive (org layer: three tiers / three talents, seven-practice mapping, recursive delegation, duty contract ≠ persona, agent-executable protocol)
 
 ---
 
