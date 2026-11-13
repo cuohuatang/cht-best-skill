@@ -1,10 +1,10 @@
 # cht-best-skill
 
-> Version **V0.0.5** · Global skill `cht-best-skill`
+> Version **V0.0.6** · Global skill `cht-best-skill`
 
-A system in six layers: **tactics** govern how the agent takes direction, **three files** how it remembers, the **communication layer** how it speaks, the **debate layer** how claims get verified, the **ambition layer** how bold a result you dare to ask for, and the **Emperor Team layer** how a *team of AIs* actually gets the work done.
+A system in seven layers: **tactics** govern how the agent takes direction, **three files** how it remembers, the **communication layer** how it speaks, the **debate layer** how claims get verified, the **ambition layer** how bold a result you dare to ask for, the **Emperor Team layer** how a *team of AIs* actually gets the work done, and the **ask-first / council double gate** how you stop it from drifting at the start or shipping a broken answer at the end.
 
-> Tactics decide how well it works; files decide how long it remembers; communication how precise it speaks; debate how trustworthy it is; ambition whether you dare ask for a real outcome — **organization decides whether anyone actually goes and does it**.
+> Tactics decide how well it works; files decide how long it remembers; communication how precise it speaks; debate how trustworthy it is; ambition whether you dare ask for a real outcome — **organization decides whether anyone actually goes and does it, and the double gate decides whether it drifted or shipped a broken answer**.
 
 ---
 
@@ -17,7 +17,7 @@ This skill is for working with AI agents (CodeBuddy / Claude / Copilot-style age
 
 The 10 tactics come from Thorsten Ball (AMPCode engineering lead) and are reframed here as actions the agent should take, not slogans for the human to read.
 
-The skill is itself a product of the meta-skill system (M3 domain-load generation). V0.0.2 grafted three meta-skill lenses onto it: an **enablement gate** (M1), an **IPO primitive-chain constraint** (M2), and a **six-operation action lexicon** (M4). V0.0.3 added the **debate layer**. V0.0.4 added the **ambition layer** as a hard, script-enforced gate. **V0.0.5 adds the Emperor Team layer — an executable orchestration engine (`pstack.py`), not another essay**: team state on disk, handoffs by command, boundaries by a hard gate.
+The skill is itself a product of the meta-skill system (M3 domain-load generation). V0.0.2 grafted three meta-skill lenses onto it: an **enablement gate** (M1), an **IPO primitive-chain constraint** (M2), and a **six-operation action lexicon** (M4). V0.0.3 added the **debate layer**. V0.0.4 added the **ambition layer** as a hard, script-enforced gate. **V0.0.5 adds the Emperor Team layer — an executable orchestration engine (`pstack.py`), not another essay**: team state on disk, handoffs by command, boundaries by a hard gate. **V0.0.6 adds the ask-first / council double gate** — two prompt assets baked into the three-file templates and enforced by `gates.py`, so ambiguities get closed before work starts and conclusions get red-teamed before delivery.
 
 ---
 
@@ -31,6 +31,7 @@ Enable this skill if any of these is true:
 - The user explicitly asks to "make a plan", "write this down", "don't forget", or "continue from last time"
 - The user mentions tactics / "getting the most out of agents" / planning with files
 - The user wants to "hire AI employees / build a team / Emperor Team / pstack / let AIs recruit and delegate" — **enable the organization layer**
+- The user wants to "ask about ambiguities first / don't invent context / reverse questioning / a council of advisors / five perspectives / internal red-teaming" — **enable the double gate**
 
 For small questions, single-turn Q&A, or pure chit-chat — **do not** enable this. Don't pile process on simple tasks.
 
@@ -47,7 +48,7 @@ For small questions, single-turn Q&A, or pure chit-chat — **do not** enable th
 | **Full** (all three files) | cross-session / multi-step / needs fact accumulation | run init script, build task_plan + findings + progress |
 | **Org tier** (Full + Emperor Team) | needs multiple roles, recursive hiring, auto handoff, skill capture, periodic review | additionally run `pstack.py init` and dispatch via the seven practices |
 
-**Decision basis** (any one unmet downgrades): boundary clarity · step count · cross-session? · needs fact accumulation. Default to the lighter tier — don't enable if you can avoid it, don't go full if light suffices. **The org tier is an optional add-on; never spin up a team for trivial tasks** (process heavier than the work).
+**Decision basis** (any one unmet downgrades): boundary clarity · step count · cross-session? · needs fact accumulation. Default to the lighter tier — don't enable if you can avoid it, don't go full if light suffices. **The org tier is an optional add-on; never spin up a team for trivial tasks** (process heavier than the work). **The double gate applies to Full / Org tiers** — Eliminate and Light skip both, so single-turn Q&A never gets buried in process.
 
 ---
 
@@ -109,9 +110,43 @@ python3 $P/pstack.py review                    # periodic performance review
 
 > **Duty contract ≠ persona** (reconciling with the debate layer's "never assign roles" and the ambition layer's "no role-play"): `PROFILE.md` holds **interface fields** (inputs / outputs / acceptance / reports-to / schedule / up-downstream); "Zhang Liang" is only a slot ID. Adjectives like "you are a genius strategist" are forbidden. We hire posts, not actors — the checker validates field completeness and never asks "does it sound like Zhang Liang".
 
-Full breakdown (three-tier architecture, seven-practice mapping, recursive delegation, 3–5 standing roles vs temporary instances, mapping to all six layers, agent-executable protocol, anti-patterns): `references/emperor-team.md`.
+Full breakdown (three-tier architecture, seven-practice mapping, recursive delegation, 3–5 standing roles vs temporary instances, mapping to all seven layers, agent-executable protocol, anti-patterns): `references/emperor-team.md`.
 
 ---
+
+## Ask-first & Council layer: two hard gates at the entrance and exit (V0.0.6 · every run)
+
+> Two high-leverage prompts, one at the **entrance** (clarify every ambiguity before starting so the agent doesn't invent context) and one at the **exit** (red-team the answer through five lenses before concluding). Like V0.0.4 / V0.0.5, **this is a gate, not an essay**: two blocks baked into the existing three-file templates (no fourth file), every item checked by `scripts/gates.py`, exit code 1 on anything unclosed.
+
+**Entrance · Reverse questioning**: the agent asks about every vague or missing piece of information *before* doing the work.
+
+> **Reconciling with tactic 06** ("ask only on real blockers, don't interrupt with trivial confirmations"): this is not "ask more", it's "**ask the right things, once**". Self-check first (resolve anything readable / queryable / inferable yourself) → keep only high-leverage ambiguities that would derail the result → **ask them all in one batch** → finish the whole job in one go → write down explicit default assumptions tagged `[hypothesis]` for anything unanswered. What's forbidden is asking while working and firing off twenty questions up front.
+
+**Exit · Council red-team**: before giving the conclusion, five independent perspectives sweep the answer for problems.
+
+| Lens | What it must produce |
+|---|---|
+| L1 Fault-finding | factual / arithmetic / logical errors, unsupported assertions |
+| L2 First principles | the real goal under the surface request; is the plan solving the wrong problem |
+| L3 Counter-example | at least one concrete scenario or boundary condition that breaks the conclusion |
+| L4 Evidence check | source and reproducible path for every key claim; missing ones tagged `[to verify]` |
+| L5 Landing | who does what, when; blockers, dependencies, rollback |
+
+> **Reconciling with "never assign roles"** (same logic as V0.0.3 / V0.0.4 / V0.0.5): the five advisors are **five review lenses**, not "you are a senior consultant" persona lines. Each item is `problem + evidence/verification action + disposition`, followed by an **arbitration & revisions** entry. We fill slots, not cast actors — the checker validates item completeness and never asks "does it sound like an advisor".
+
+**Why a hard gate**: `task_plan.md` "0.1 Reverse questioning" and `progress.md` "Council red-team" are generated by **every** `init_task.py` run. `gates.py clarify` checks A self-resolved / B high-leverage ambiguities / C one batched question set / D per-question closure (**every Q in C must have an answer in D**); `gates.py council` checks ≥1 three-part item in each of the five lenses plus ≥1 arbitration entry. Any gap, numbering skip, or leftover `【待填】` placeholder blocks.
+
+```bash
+P=~/.codebuddy/skills/cht-best-skill/scripts
+python3 $P/gates.py clarify "<task dir>" || exit 1   # before starting: unclosed questions block
+python3 $P/gates.py council "<task dir>" || exit 1   # before delivery: missing lens / no arbitration blocks
+python3 $P/gates.py verify  "<task dir>" || exit 1   # delivery check: both gates at once
+python3 $P/gates.py seed    "<old task dir>"         # backfill blocks, never overwrite
+```
+
+> **Two boundaries**: ① a red-team is the agent checking itself — it **cannot replace the external validation standard** required by the ambition layer (self-grading ≠ external validation); ② the debate layer makes multiple answers fight, the council sweeps one answer through five lenses — they stack: `council` → cross-examine → human arbitration. Eliminate / Light tiers skip both gates.
+
+Full breakdown: `references/clarify-council.md`. Paste-ready prompts: `assets/prompts/reverse-questions.md` and `assets/prompts/council.md`.
 
 ## Step 1: Drop memory onto disk
 
@@ -164,6 +199,8 @@ Full breakdown and counter-examples are in `references/tactics.md`.
 | 06 Let go | the three files — state survives without the human present |
 | 08 One task one context | one task one directory, naturally isolated |
 | 09 Record as memory | three files replace volatile chat history |
+| Reverse questioning (V0.0.6 entrance) | `task_plan.md` "0.1" four-part closure |
+| Council red-team (V0.0.6 exit) | `progress.md` "Council red-team" five lenses + arbitration |
 
 ---
 
@@ -222,15 +259,16 @@ How it meshes: 03 governs **input** (give real context), debate governs **output
 > Grafted from the meta-skill system's M2 — restructure the task into an end-to-end IPO (Input→Process→Output) primitive chain, cutting the "human-limitation compensation layer".
 
 0. **Ambition upgrade (pre-flight)**: rewrite the shallow request into height / depth / breadth, fill them into `task_plan.md` "0. Ambition upgrade", and pass `verify_ambition.py` (exit 0) before proceeding. Eliminate-tier tasks skip this step.
+0.2. **Reverse questioning (entrance · every run)**: follow `assets/prompts/reverse-questions.md` — self-check first, ask only high-leverage ambiguities in one batch, close every question (unanswered ones tagged `[hypothesis]`), fill `task_plan.md` "0.1", and pass `gates.py clarify`. Eliminate / Light tiers skip this.
 0.5. **Staff the team (org tier only)**: `pstack.py init` → fill `ONBOARDING.md` → pass `verify_team.py` → Zhang Liang decomposes and dispatches → `handoff` auto-relays → `capture` distills → `review` audits. Never for trivial tasks.
 1. **Pick up the task**: restate goal + acceptance criteria (02); if materials are thin, ask first (03), don't guess.
 2. **Persist**: run the init script, write the phases in `task_plan.md`.
 3. **Work**: advance one phase at a time, writing into `findings.md` / `progress.md` as you go.
 4. **Change phase**: update plan's "current phase" first, then act; write the phase conclusion into progress's decision log.
-5. **Deliver**: give evidence (05); mark parts that need human sign-off (10); finally update progress's next steps. **Re-run `verify_ambition.py`; for org tier also `verify_team.py`.**
+5. **Deliver**: first red-team the answer through the five lenses per `assets/prompts/council.md` and write it into `progress.md`, making sure arbitration actually changes the conclusion; then give evidence (05), mark parts needing human sign-off (10), update progress's next steps. **Before delivery run `gates.py verify` (both gates) + `verify_ambition.py`; for org tier also `verify_team.py`.**
 
 **Two hard constraints**
-- **≤5 primitives**: any task breaks into at most 5 primitives (steps 0 / 0.5 are pre-flight gates, not counted); more means a compensation layer is still untrimmed — loop back with M2 thinking and keep cutting.
+- **≤5 primitives**: any task breaks into at most 5 primitives (steps 0 / 0.2 / 0.5 are pre-flight gates, not counted); more means a compensation layer is still untrimmed — loop back with M2 thinking and keep cutting.
 - **Minimize cross-primitive handoff**: intermediate artifacts may stay as calibration anchors, but don't pile docs between primitives or hand off repeatedly; in the org tier always use `handoff` — **never manual relay**.
 
 ---
@@ -265,6 +303,11 @@ If context is lost or the session changed, recover in this order — **don't sta
 - Never `capture`-ing a finished job, re-teaching next time; all AIs sharing one output dir (no traceability)
 - Writing persona adjectives like "you are a genius strategist" (role-play, red line of the duty-contract layer)
 - Spinning up a team for a trivial task (violates the M1 enablement gate — process heavier than the work)
+- Firing off twenty questions up front, or asking "is this OK?" after every step (turning reverse questioning into a confirmation machine — violates 06)
+- Leaving the self-check section empty, or listing questions without closing every Q (inventing context — violates 03)
+- Writing "as a senior consultant, I think…" instead of itemized faults (persona red line)
+- Filling only two of the five lenses, or writing "no issues found" in each (box-ticking red-team)
+- Finding faults but recording no arbitration/revision, shipping the conclusion unchanged; passing a red-team table off as external validation (self-grading ≠ external validation)
 
 ---
 
@@ -274,13 +317,17 @@ If context is lost or the session changed, recover in this order — **don't sta
 - `scripts/verify_ambition.py` — ambition hard gate: exit 1 when any dimension is incomplete
 - `scripts/pstack.py` — **Emperor Team orchestration engine** (executable org-layer kernel: init / hire / onboard / dispatch / handoff / capture / reuse / review / verify / status)
 - `scripts/verify_team.py` — team hard gate (3–5 roles, three talents, duty contracts, identity isolation, restate confirmation)
-- `assets/templates/` — blank templates for the three files (task_plan carries "0. Ambition upgrade")
+- `scripts/gates.py` — **V0.0.6 double gate** (clarify entrance four-part closure / council exit five lenses + arbitration / verify / seed)
+- `assets/templates/` — blank templates for the three files (task_plan carries "0. Ambition upgrade" + "0.1 Reverse questioning"; progress carries "Council red-team")
+- `assets/prompts/reverse-questions.md` — ask-first prompt (full + short form, reconciling with tactic 06)
+- `assets/prompts/council.md` — five-lens council prompt (full + short form, "review lens ≠ persona" red line)
 - `references/tactics.md` — deep dive on the 10 tactics (for human and agent to read together)
 - `references/memory-protocol.md` — three-file protocol and recovery flow
 - `references/communication.md` — Grice's four maxims (communication layer, with a copy-paste prompt snippet)
 - `references/debate.md` — Jensen Huang's AI debate verification (debate layer: self-check → cross-examine → arbitrate, with three ready-to-paste prompts)
 - `references/ambition.md` — height / depth / breadth deep dive (ambition layer, with three paste-ready templates and the role-conflict reconciliation)
 - `references/emperor-team.md` — Emperor Team deep dive (org layer: three tiers / three talents, seven-practice mapping, recursive delegation, duty contract ≠ persona, agent-executable protocol)
+- `references/clarify-council.md` — V0.0.6 double-gate deep dive (two conflict reconciliations, field spec, mapping to all seven layers, agent protocol, anti-patterns)
 
 ---
 
@@ -290,6 +337,8 @@ If context is lost or the session changed, recover in this order — **don't sta
 2. Did I get **evidence** or just **claims**? (05)
 3. Is this memory on **disk** or only in the **conversation**? (09)
 4. Did I ask for a **real outcome**, or just a surface task? (ambition · height)
+5. Before starting, did I ask the **right** ambiguities once — and close every one of them? (reverse questioning)
+6. Before delivering, did all **five lenses** produce verifiable items, and did the arbitration actually change the conclusion? (council)
 
 ---
 

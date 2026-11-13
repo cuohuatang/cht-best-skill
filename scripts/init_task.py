@@ -82,7 +82,23 @@ def main() -> int:
             print("  ① 填 task_plan.md「0. 野心升级」的高度/深度/广度三项")
             print("  ② 校验通过后再填目标与验收标准，进入阶段 1")
             print(f"  ③ 校验命令：{verify_cmd}")
-    print("\n下一步：先完成上面的野心升级，再填目标与验收标准，然后开工。")
+    # V0.0.6：入口/出口双闸门，每次生成都把校验命令递到手上（刚生成必然待填，故不阻断）
+    try:
+        from gates import check_clarify, check_council
+    except ImportError:  # 兼容单独拷走本脚本的场景
+        check_clarify = check_council = None
+
+    gate = SKILL_ROOT / "scripts" / "gates.py"
+    if check_clarify and check_council:
+        c_ok, _ = check_clarify(plan)
+        k_ok, _ = check_council(task_dir / "progress.md")
+        print("\n[V0.0.6 双闸门] 两个必填区块已生成（当前均待填）:")
+        print(f"  - 入口 反向提问   task_plan.md「0.1」: {'已闭环 ✓' if c_ok else '待填'}")
+        print(f"  - 出口 智囊团排雷 progress.md「智囊团排雷」: {'已排雷 ✓' if k_ok else '待填'}")
+        print(f"  - 开工前：python3 {gate} clarify \"{task_dir}\"   （未闭环阻断）")
+        print(f"  - 交付前：python3 {gate} verify  \"{task_dir}\"   （任一未过阻断）")
+
+    print("\n下一步：① 野心升级 → ② 反向提问批量问清并逐条闭环 → ③ 填目标与验收标准 → 开工；交付前补 5 镜头排雷与裁决。")
     return 0
 
 

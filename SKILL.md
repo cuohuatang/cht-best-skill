@@ -1,15 +1,15 @@
 ---
 name: cht-best-skill
-description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk, enforces an ambition-upgrade gate (height/depth/breadth of the goal), can spin up a 3-5 role Emperor Team orchestration engine (pstack: hire/dispatch/handoff/capture/review/verify), and applies 10 agent-collaboration tactics, Grice-style communication and multi-AI debate verification. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / AI 辩论 / 交叉核验 / 核实 AI 答案 / 野心升级 / 高度深度广度 / 帝王团队 / AI 人事 / 造 AI 员工 / 搭班子 / pstack / 编排 AI 团队 / 三才 / 张良韩信萧何 / How to be more ambitious / planning with files」时使用。"
+description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk, enforces an ambition-upgrade gate (height/depth/breadth of the goal), an ask-first clarify gate and a 5-lens council red-team gate (gates.py), can spin up a 3-5 role Emperor Team orchestration engine (pstack: hire/dispatch/handoff/capture/review/verify), and applies 10 agent-collaboration tactics, Grice-style communication and multi-AI debate verification. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / AI 辩论 / 交叉核验 / 核实 AI 答案 / 野心升级 / 高度深度广度 / 帝王团队 / AI 人事 / 造 AI 员工 / 搭班子 / pstack / 编排 AI 团队 / 三才 / 张良韩信萧何 / 反向提问 / 先问清再干 / 别脑补 / 智囊团 / 5 位顾问 / 五视角 / 内部排雷 / 挑错 / 追问本质 / How to be more ambitious / planning with files」时使用。"
 ---
 
 # Agent Playbook
 
-> 版本 **V0.0.5** · 全局技能 `cht-best-skill`
+> 版本 **V0.0.6** · 全局技能 `cht-best-skill`
 
-一套系统的六层：**心法管怎么指挥、三文件管怎么记住、沟通层管怎么说、辩论层管怎么验、野心层管敢要什么、帝王团队层管让一队 AI 真把活干出来。**
+一套系统的七层：**心法管怎么指挥、三文件管怎么记住、沟通层管怎么说、辩论层管怎么验、野心层管敢要什么、帝王团队层管让一队 AI 真把活干出来、双闸门层管入口问清与出口排雷。**
 
-> 心法决定它做得多好，文件决定它记得多久，沟通决定它说得多准，辩论决定它可不可信，野心决定你敢不敢要一个真正的结果，**组织决定这个结果有没有人真去干**。
+> 心法决定它做得多好，文件决定它记得多久，沟通决定它说得多准，辩论决定它可不可信，野心决定你敢不敢要一个真正的结果，**组织决定这个结果有没有人真去干，双闸门决定它有没有跑偏、有没有带病出门**。
 
 ## 什么时候用
 
@@ -21,6 +21,7 @@ description: "Use when a task is multi-step, long-running, or must survive conte
 - 用户明确要求"做个计划""记下来""别忘了""接着上次继续"
 - 用户提到心法、Agent 用到极致、planning with files
 - 用户要"造 AI 员工 / 搭班子 / 帝王团队 / pstack / 让 AI 自己找人干活"——**启用组织层**
+- 用户要"先问清再干 / 别脑补 / 反向提问 / 智囊团 / 5 位顾问 / 内部排雷"——**启用双闸门层**
 
 小问题、单轮问答、纯闲聊——**不要**启用，别给用户堆流程。
 
@@ -35,7 +36,7 @@ description: "Use when a task is multi-step, long-running, or must survive conte
 | **完整档**（三文件全开）| 跨会话 / 多步骤 / 需沉淀事实 | 跑 init 脚本，建 task_plan + findings + progress |
 | **组织档**（完整档 + 帝王团队）| 需要多个角色分工、递归招人、自动流转、技能沉淀、定期查岗 | 在完整档之上再跑 `pstack.py init`，按七条实操组团派活 |
 
-**决策依据**（四项任一不满足即降级）：边界清晰度 · 步骤数 · 是否跨会话 · 是否需事实沉淀。默认往轻里选——能不启就不启，能轻量不全量。**组织档是可选加层，琐碎任务绝不组团**（流程比活还重）。
+**决策依据**（四项任一不满足即降级）：边界清晰度 · 步骤数 · 是否跨会话 · 是否需事实沉淀。默认往轻里选——能不启就不启，能轻量不全量。**组织档是可选加层，琐碎任务绝不组团**（流程比活还重）。**双闸门层适用于完整档 / 组织档**：消除档与轻量档跳过两道闸门，别给单轮问答堆流程。
 
 ## 野心升级（接活前置 · 每次必做 · 硬闸门）
 
@@ -93,7 +94,42 @@ python3 $P/pstack.py review                    # 定期查岗迭代
 
 > **职责契约 ≠ 角色人设**（与辩论层"从不设角色"、野心层"不演专家"的调和）：`PROFILE.md` 写的是**接口字段**（输入/输出/验收/汇报/定时/上下游），"张良"只是槽位 ID；禁止"你是天才战略家"这类形容词。招的是岗位，不是演员。校验器只查字段完整性，从不查"像不像张良"。
 
-详见 `references/emperor-team.md`（三层架构、七条映射表、递归分工、3-5 常设岗 vs 临时执行实例、与六层咬合、Agent 可执行协议、反模式）。
+详见 `references/emperor-team.md`（三层架构、七条映射表、递归分工、3-5 常设岗 vs 临时执行实例、与各层咬合、Agent 可执行协议、反模式）。
+
+## 双闸门层：反向提问（入口） + 智囊团排雷（出口）（V0.0.6 · 每次必做）
+
+> 两条高阶提示词，一条卡在**入口**（动工前把模糊点一次问清，别脑补），一条卡在**出口**（下结论前 5 个视角内部排雷，别让带病结论出门）。
+> 和 V0.0.4 / V0.0.5 一样**不是文档，是闸门**：两个区块内嵌进三文件模板（不新增第四个文件），`scripts/gates.py` 逐项校验，未闭环退出码 1。
+
+**入口 · 反向提问**：AI 先问清所有信息模糊、缺失的点再干活，避免自行脑补跑偏。
+
+> **与心法 06 的调和**：不是"多问"，是"**把该问的一次问对**"。先自查（能读/查/推的自己解决）→ 只留"不问就会跑偏"的高杠杆点 → **批量一次问清** → 问完一口气干完 → 未答项明写默认假设并标 `[假设]`。反对的是边做边问、一上来甩 20 个问题。
+
+**出口 · 智囊团排雷**：给结论前，让 5 个不同视角的顾问先内部排雷，再给出结论。
+
+| 镜头 | 要交出的东西 |
+|---|---|
+| L1 挑错 | 事实/计算/逻辑错误、无依据断言 |
+| L2 追问本质 | 表层诉求下的真实目标；方案是不是在解错问题 |
+| L3 找反例 | 至少一个让结论不成立的具体场景/边界条件 |
+| L4 查证据 | 每条关键结论的出处与可复核路径；缺证据标 `[待验证]` |
+| L5 推落地 | 谁、何时、做什么动作；卡点、依赖、失败回退 |
+
+> **与「不设角色」的调和**（与 V0.0.3「从不设角色」、V0.0.4「不演专家」、V0.0.5「职责契约 ≠ 人设」同一条逻辑）：5 位顾问 = **5 个审查镜头**，不是"你是资深顾问"的人设台词。每条交出「问题 + 证据/查证动作 + 处置」，最后给**裁决与修订**。招的是槽位，不是演员；校验器只查条目完整，从不查"像不像顾问"。
+
+**为什么是硬闸门**：`task_plan.md`「0.1 反向提问」与 `progress.md`「智囊团排雷」由 `init_task.py` **每次必生成**。`gates.py clarify` 查 A 自查 / B 高杠杆模糊点 / C 一次性提问批次 / D 逐条闭环（**C 里每个 Q 在 D 都要有着落**）；`gates.py council` 查 5 镜头各 ≥1 条三段式条目 + 裁决 ≥1 条。任一缺失、跳号或残留 `【待填】` 即阻断。
+
+```bash
+P=~/.codebuddy/skills/cht-best-skill/scripts
+python3 $P/gates.py clarify "<任务目录>" || exit 1   # 开工前：未闭环阻断
+python3 $P/gates.py council "<任务目录>" || exit 1   # 交付前：缺镜头/无裁决阻断
+python3 $P/gates.py verify  "<任务目录>" || exit 1   # 交付总检：两道一起过
+python3 $P/gates.py seed    "<旧任务目录>"          # 老目录补齐区块，不覆盖
+```
+
+> **两条边界**：① 排雷是 AI 对自己的挑错，**不能冒充野心层要求的外部验证标准**（自评 ≠ 外部验证）；② 辩论层是多答案互驳，智囊团是单份答案内部 5 视角，可叠加：`council` → 互驳 → 人裁决。消除档/轻量档跳过两道闸门。
+
+详见 `references/clarify-council.md`；可直接粘贴的提示词在 `assets/prompts/reverse-questions.md` 与 `assets/prompts/council.md`。
 
 ## 第一步：把记忆落到磁盘
 
@@ -174,6 +210,8 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 | 06 放手 | 三文件——人不在场，状态仍在 |
 | 08 一任务一上下文 | 一任务一目录，天然隔离 |
 | 09 记录即记忆 | 三文件替代易失的对话历史 |
+| 反向提问（V0.0.6 入口） | `task_plan.md`「0.1」四段闭环 |
+| 智囊团排雷（V0.0.6 出口） | `progress.md`「智囊团排雷」5 镜头 + 裁决 |
 
 ## 动作原语：六元操作词典（来自 M4 执行轴）
 
@@ -192,15 +230,16 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 > 嫁接自元技能系统的 M2 工作流重构——把任务重整为端到端 IPO（输入→处理→输出）基元链，砍掉"人的局限补偿层"。
 
 0. **野心升级（前置）**：把浅层指令改写为高度/深度/广度三维度，填进 `task_plan.md`「0. 野心升级」，跑 `verify_ambition.py` 通过（退出码 0）才准往下走。消除档任务跳过此步。
+0.2. **反向提问（入口 · 每次必做）**：按 `assets/prompts/reverse-questions.md` 先自查、只对高杠杆模糊点批量问一次、逐条闭环（未答标 `[假设]`），填进 `task_plan.md`「0.1」，跑 `gates.py clarify` 通过才准往下走。消除档/轻量档跳过此步。
 0.5. **组团（组织档才做）**：需多角色分工时跑 `pstack.py init` → 填 `ONBOARDING.md` → `verify_team.py` 通过 → 张良拆分派工 → `handoff` 自动流转 → `capture` 沉淀 → `review` 查岗。琐碎任务不做。
 1. **接活**：复述目标与验收标准（02）；材料不够先要（03），别猜。
 2. **落盘**：跑 init 脚本，写 `task_plan.md` 的阶段。
 3. **开工**：一次推进一个阶段，边做边往 `findings.md` / `progress.md` 写。
 4. **换阶段**：先更新 plan 的"当前阶段"，再动手；阶段结论写进 progress 的决策记录。
-5. **交付**：给证据（05）；需要人定稿的部分明确标注（10）；最后更新 progress 的下一步。**交付前再跑一次 `verify_ambition.py`；组织档再跑 `verify_team.py`**。
+5. **交付**：先按 `assets/prompts/council.md` 用 5 镜头排雷并写进 `progress.md`，裁决与修订要真改到结论里；再给证据（05）、标注需人定稿的部分（10）、更新 progress 下一步。**交付前跑 `gates.py verify`（两道一起过）+ `verify_ambition.py`；组织档再跑 `verify_team.py`**。
 
 **两条硬约束**
-- **基元数 ≤5**：任一任务拆到不超过 5 个基元（第 0 / 0.5 步为前置闸门，不计入）；超过说明还有"补偿层"没消干净，回炉用 M2 思路继续砍。
+- **基元数 ≤5**：任一任务拆到不超过 5 个基元（第 0 / 0.2 / 0.5 步为前置闸门，不计入）；超过说明还有"补偿层"没消干净，回炉用 M2 思路继续砍。
 - **跨基元传递最小化**：中间产物可保留作校准点（纠偏锚点），但不在基元间堆文档、不反复交接；组织档一律走 `handoff`，**绝不人工搬运**。
 
 ## 中断了怎么接着干
@@ -231,6 +270,11 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 - 干完不 `capture`，下次从头教；所有 AI 共用一个输出目录（无法排查）
 - 给 AI 写"你是天才战略家"这类人设形容词（角色扮演，职责契约层红线）
 - 琐碎任务也组团（违反 M1 启用闸门，流程比活还重）
+- 一上来甩 20 个问题、每步都问"这样可以吗"（把反向提问做成确认机器，违反 06）
+- 自查段留空，把能查到的也拿去问人；只列问题不做 D 段闭环就开工（脑补，违反 03）
+- 让 AI 写"作为资深顾问我认为……"的点评交差（角色扮演红线）
+- 5 个镜头只填 2 个、或每镜头一句"无明显问题"（形式主义排雷）
+- 挑出一堆毛病却没有裁决与修订，结论原样发出；拿排雷表冒充外部验证（自评 ≠ 外部验证）
 
 ## 文件
 
@@ -238,6 +282,9 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 - `scripts/verify_ambition.py` — 野心升级硬闸门：三维度未填完退出码 1
 - `scripts/pstack.py` — **帝王团队编排引擎**（组织层可执行内核：init/hire/onboard/dispatch/handoff/capture/reuse/review/verify/status）
 - `scripts/verify_team.py` — 团队硬闸门（3-5 岗、三才齐备、职责契约、身份隔离、复述确认）
+- `scripts/gates.py` — **V0.0.6 双闸门**（clarify 入口四段闭环 / council 出口 5 镜头 + 裁决 / verify 总检 / seed 补齐旧目录）
+- `assets/prompts/reverse-questions.md` — 反向提问提示词（主版 + 短版，含与心法 06 的调和）
+- `assets/prompts/council.md` — 5 镜头智囊团提示词（主版 + 短版，含"审查镜头 ≠ 人设"红线）
 - `assets/templates/` — 三个文件的空白模板（task_plan 内置「0. 野心升级」）
 - `references/tactics.md` — 10 条心法详解（给人和 Agent 共读）
 - `references/memory-protocol.md` — 三文件协议与恢复流程
@@ -245,3 +292,4 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 - `references/debate.md` — 黄仁勋 AI 辩论核验法（辩论层：自查→互驳→裁决，含三条即用提示词）
 - `references/ambition.md` — 高度/深度/广度三维度详解（野心层，含三个通用模板与角色冲突调和）
 - `references/emperor-team.md` — 帝王团队详解（组织层：三层架构/三才、七条映射表、递归分工、职责契约≠人设、可执行协议）
+- `references/clarify-council.md` — V0.0.6 双闸门详解（两处冲突调和、字段规范、与七层咬合、Agent 协议、反模式）
