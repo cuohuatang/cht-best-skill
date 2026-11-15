@@ -98,6 +98,13 @@ def main() -> int:
         print(f"  - 开工前：python3 {gate} clarify \"{task_dir}\"   （未闭环阻断）")
         print(f"  - 交付前：python3 {gate} verify  \"{task_dir}\"   （任一未过阻断）")
 
+    dec = SKILL_ROOT / "scripts" / "decision.py"
+    print("\n[V0.0.7 决策关] 默认不启用；仅当本次是高利害分叉（不可逆成本 / 反复讨论 / 方向性选择）才做：")
+    print(f"  - 元层回看：python3 {dec} scan \"{task_dir.parent.parent}\"")
+    print(f"  - 追加区块：python3 {dec} init \"{task_dir}\"")
+    print(f"  - 定稿校验：python3 {dec} verify \"{task_dir}\" --required")
+    print("  消除档 / 轻量档跳过，别给琐碎任务堆流程。")
+
     print("\n下一步：① 野心升级 → ② 反向提问批量问清并逐条闭环 → ③ 填目标与验收标准 → 开工；交付前补 5 镜头排雷与裁决。")
     return 0
 

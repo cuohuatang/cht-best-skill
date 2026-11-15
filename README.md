@@ -1,10 +1,12 @@
 # cht-best-skill
 
-> Version **V0.0.6** · Global skill `cht-best-skill`
+> Version **V0.0.7** · Global skill `cht-best-skill`
 
 A system in seven layers: **tactics** govern how the agent takes direction, **three files** how it remembers, the **communication layer** how it speaks, the **debate layer** how claims get verified, the **ambition layer** how bold a result you dare to ask for, the **Emperor Team layer** how a *team of AIs* actually gets the work done, and the **ask-first / council double gate** how you stop it from drifting at the start or shipping a broken answer at the end.
 
 > Tactics decide how well it works; files decide how long it remembers; communication how precise it speaks; debate how trustworthy it is; ambition whether you dare ask for a real outcome — **organization decides whether anyone actually goes and does it, and the double gate decides whether it drifted or shipped a broken answer**.
+
+> There is also **one on-demand decision gate** (V0.0.7): **not an eighth layer**, fired only at high-stakes forks — surface the question you have been avoiding, then arbitrate the decision and monitor its reversal conditions.
 
 ---
 
@@ -17,7 +19,7 @@ This skill is for working with AI agents (CodeBuddy / Claude / Copilot-style age
 
 The 10 tactics come from Thorsten Ball (AMPCode engineering lead) and are reframed here as actions the agent should take, not slogans for the human to read.
 
-The skill is itself a product of the meta-skill system (M3 domain-load generation). V0.0.2 grafted three meta-skill lenses onto it: an **enablement gate** (M1), an **IPO primitive-chain constraint** (M2), and a **six-operation action lexicon** (M4). V0.0.3 added the **debate layer**. V0.0.4 added the **ambition layer** as a hard, script-enforced gate. **V0.0.5 adds the Emperor Team layer — an executable orchestration engine (`pstack.py`), not another essay**: team state on disk, handoffs by command, boundaries by a hard gate. **V0.0.6 adds the ask-first / council double gate** — two prompt assets baked into the three-file templates and enforced by `gates.py`, so ambiguities get closed before work starts and conclusions get red-teamed before delivery.
+The skill is itself a product of the meta-skill system (M3 domain-load generation). V0.0.2 grafted three meta-skill lenses onto it: an **enablement gate** (M1), an **IPO primitive-chain constraint** (M2), and a **six-operation action lexicon** (M4). V0.0.3 added the **debate layer**. V0.0.4 added the **ambition layer** as a hard, script-enforced gate. **V0.0.5 adds the Emperor Team layer — an executable orchestration engine (`pstack.py`), not another essay**: team state on disk, handoffs by command, boundaries by a hard gate. **V0.0.6 adds the ask-first / council double gate** — two prompt assets baked into the three-file templates and enforced by `gates.py`, so ambiguities get closed before work starts and conclusions get red-teamed before delivery. **V0.0.7 merges two more high-value prompts into a single on-demand decision gate** (`decision.py`): a meta-level reframe of the avoided root question, three-stage adversarial arbitration, and observable reversal conditions — deliberately off by default.
 
 ---
 
@@ -32,6 +34,7 @@ Enable this skill if any of these is true:
 - The user mentions tactics / "getting the most out of agents" / planning with files
 - The user wants to "hire AI employees / build a team / Emperor Team / pstack / let AIs recruit and delegate" — **enable the organization layer**
 - The user wants to "ask about ambiguities first / don't invent context / reverse questioning / a council of advisors / five perspectives / internal red-teaming" — **enable the double gate**
+- The user faces a high-stakes fork (should we do it / which path / irreversible cost), or says "I'm torn / something feels off / we're going in circles" — **fire the decision gate on demand**
 
 For small questions, single-turn Q&A, or pure chit-chat — **do not** enable this. Don't pile process on simple tasks.
 
@@ -48,7 +51,7 @@ For small questions, single-turn Q&A, or pure chit-chat — **do not** enable th
 | **Full** (all three files) | cross-session / multi-step / needs fact accumulation | run init script, build task_plan + findings + progress |
 | **Org tier** (Full + Emperor Team) | needs multiple roles, recursive hiring, auto handoff, skill capture, periodic review | additionally run `pstack.py init` and dispatch via the seven practices |
 
-**Decision basis** (any one unmet downgrades): boundary clarity · step count · cross-session? · needs fact accumulation. Default to the lighter tier — don't enable if you can avoid it, don't go full if light suffices. **The org tier is an optional add-on; never spin up a team for trivial tasks** (process heavier than the work). **The double gate applies to Full / Org tiers** — Eliminate and Light skip both, so single-turn Q&A never gets buried in process.
+**Decision basis** (any one unmet downgrades): boundary clarity · step count · cross-session? · needs fact accumulation. Default to the lighter tier — don't enable if you can avoid it, don't go full if light suffices. **The org tier is an optional add-on; never spin up a team for trivial tasks** (process heavier than the work). **The double gate applies to Full / Org tiers** — Eliminate and Light skip both, so single-turn Q&A never gets buried in process. **The decision gate is not one of these tiers**: it is an on-demand trigger stacked on Full / Org, fired only at a high-stakes fork and skipped entirely for Eliminate / Light.
 
 ---
 
@@ -148,6 +151,43 @@ python3 $P/gates.py seed    "<old task dir>"         # backfill blocks, never ov
 
 Full breakdown: `references/clarify-council.md`. Paste-ready prompts: `assets/prompts/reverse-questions.md` and `assets/prompts/council.md`.
 
+## Decision gate: an on-demand trigger, not an eighth layer (V0.0.7)
+
+> Two high-value prompts merged into one landing point: first surface the question you've been avoiding (**pick the right problem**), then arbitrate the decision and monitor its reversal conditions (**make the right call**).
+> **This is not an eighth layer, nor a sixth gate you must pass every run** — it's a decision gate fired only at high-stakes forks, at steps 0.3 / 4.5 of the execution loop, not counted toward ≤5 primitives. **Off by default; err on the side of using it less.**
+
+**The two original prompts**: ① "Across all the problems we've discussed repeatedly, is there a deeper question I've been circling but never actually asked?" ② "Fully embody the devil's advocate, the decision-flaw auditor and the neutral judge: phase 1, supporting me is forbidden — prove the decision wrong as strongly as possible, finding missing facts, over-optimistic assumptions, irreversible costs, opportunity costs, worst-case risk, and emotional cognitive biases; phase 2, switch to the supporting view and list the core reasons it could hold; phase 3, as neutral judge, compare the key evidence and tell me directly which side prevails, the largest unknown risk, and under which conditions the conclusion would flip — don't force a 50/50 balance."
+
+**The merged five beats**:
+
+| Beat | What it does | Lands in |
+|---|---|---|
+| **S0 Meta-level reframe** | `decision.py scan` sweeps `agent-tasks/*/` decision logs and `[hypothesis]` entries across directories for repeatedly rejected options / rework / recurring assumptions → answers "is there a question I never asked?" | If the real question changed, rule **continue / reframe the goal / stop** and write back to `task_plan.md` "3. Boundaries / 6. Change log" |
+| **S1 Devil's advocate** | Supporting is forbidden; six items: missing facts / over-optimistic assumptions / irreversible costs / opportunity costs / worst-case risk / emotional cognitive bias | Rebuttal items only; the checker blocks supportive phrasing |
+| **S2 Supporting view** | Core reasons the decision could hold, with evidence | ≥1 item |
+| **S3 Neutral judge** | Compare key evidence, state clearly which side's **evidence prevails** (against / for / needs evidence / defer) + largest unknown risk | Bans "50/50 / both have a point / too close to call", and requires an explicit stance |
+| **R Reversal conditions** | "When X appears, the conclusion should flip to Y" + monitoring method / threshold | Feeds tactic 07 scheduled checks; notify when a condition hits |
+
+**Why merge them**: separately they'd become a 5th and 6th gate — six in total with the existing four — making the process heavier than the work (violates M1 and tactic 06). Merged, it's **one trigger that fires on demand**, wiring together three existing capabilities: the three-file memory, the debate layer, and scheduled tasks. A full-repo search confirmed the seven layers previously had **no** notion of irreversible cost, opportunity cost, cognitive bias, reversal conditions, or an avoided root question.
+
+**Two reconciliations**:
+
+> ① **Argument slots ≠ personas** (fourth reuse of the V0.0.3 → V0.0.6 logic): "devil's advocate expert" is an **output contract**, not an authority-inflating adjective. This prompt ships with its own anti-sycophancy constraints — "supporting me is forbidden", "refuse a forced 50/50" — so it *suppresses* sycophancy, on the same side as Jensen Huang's method. We fill slots, not cast actors.
+> ② **Evidence-prevails judgment ≠ deciding for the human**: V0.0.3 has the human arbitrate and stay impartial; this gate makes the AI **say which side prevails**. The difference is real — the AI supplies an evidence-prevails judgment + largest unknown risk + reversal conditions; tactic 10 keeps the final call with the human.
+
+**Trigger threshold** (any one; Eliminate / Light tiers skip entirely): high irreversible cost (external commitment / release / spend / data deletion / signing) · discussed across ≥2 sessions or reworked ≥2 times · the user says "I'm torn / should I / something feels off / we're going in circles" · a directional choice rather than an execution detail.
+
+```bash
+P=~/.codebuddy/skills/cht-best-skill/scripts
+python3 $P/decision.py scan "<parent of agent-tasks>"     # S0 material: cross-session signals
+python3 $P/decision.py init "<task dir>"                  # idempotent append of the S0–R block (not baked into the template → zero cost when unused)
+python3 $P/decision.py verify "<task dir>" --required || exit 1
+```
+
+> When the block is absent, `verify` passes by default (treated as not enabled); `--required` explicitly declares "this is high-stakes", and a missing block then blocks. **Only trigger it when needed — but once triggered, it must be filled in completely.**
+
+Full breakdown: `references/decision-gate.md`. Paste-ready merged prompt: `assets/prompts/decision.md`.
+
 ## Step 1: Drop memory onto disk
 
 ```bash
@@ -201,6 +241,7 @@ Full breakdown and counter-examples are in `references/tactics.md`.
 | 09 Record as memory | three files replace volatile chat history |
 | Reverse questioning (V0.0.6 entrance) | `task_plan.md` "0.1" four-part closure |
 | Council red-team (V0.0.6 exit) | `progress.md` "Council red-team" five lenses + arbitration |
+| Decision gate (V0.0.7 on demand) | `progress.md` decision log + S0–R block; `task_plan.md` boundaries / change log |
 
 ---
 
@@ -260,6 +301,7 @@ How it meshes: 03 governs **input** (give real context), debate governs **output
 
 0. **Ambition upgrade (pre-flight)**: rewrite the shallow request into height / depth / breadth, fill them into `task_plan.md` "0. Ambition upgrade", and pass `verify_ambition.py` (exit 0) before proceeding. Eliminate-tier tasks skip this step.
 0.2. **Reverse questioning (entrance · every run)**: follow `assets/prompts/reverse-questions.md` — self-check first, ask only high-leverage ambiguities in one batch, close every question (unanswered ones tagged `[hypothesis]`), fill `task_plan.md` "0.1", and pass `gates.py clarify`. Eliminate / Light tiers skip this.
+0.3. **Decision gate (on demand)**: only at a high-stakes fork — `decision.py scan` → `init` → fill S0–R → `verify --required`; if S0 rules "reframe the goal / stop", write back to `task_plan.md` and loop back with M2 thinking. Eliminate / Light tiers skip it; never for trivial tasks. May also run at 4.5 when a phase change hits a fork.
 0.5. **Staff the team (org tier only)**: `pstack.py init` → fill `ONBOARDING.md` → pass `verify_team.py` → Zhang Liang decomposes and dispatches → `handoff` auto-relays → `capture` distills → `review` audits. Never for trivial tasks.
 1. **Pick up the task**: restate goal + acceptance criteria (02); if materials are thin, ask first (03), don't guess.
 2. **Persist**: run the init script, write the phases in `task_plan.md`.
@@ -268,7 +310,7 @@ How it meshes: 03 governs **input** (give real context), debate governs **output
 5. **Deliver**: first red-team the answer through the five lenses per `assets/prompts/council.md` and write it into `progress.md`, making sure arbitration actually changes the conclusion; then give evidence (05), mark parts needing human sign-off (10), update progress's next steps. **Before delivery run `gates.py verify` (both gates) + `verify_ambition.py`; for org tier also `verify_team.py`.**
 
 **Two hard constraints**
-- **≤5 primitives**: any task breaks into at most 5 primitives (steps 0 / 0.2 / 0.5 are pre-flight gates, not counted); more means a compensation layer is still untrimmed — loop back with M2 thinking and keep cutting.
+- **≤5 primitives**: any task breaks into at most 5 primitives (steps 0 / 0.2 / 0.3 / 0.5 are pre-flight or fork gates, not counted); more means a compensation layer is still untrimmed — loop back with M2 thinking and keep cutting.
 - **Minimize cross-primitive handoff**: intermediate artifacts may stay as calibration anchors, but don't pile docs between primitives or hand off repeatedly; in the org tier always use `handoff` — **never manual relay**.
 
 ---
@@ -308,6 +350,12 @@ If context is lost or the session changed, recover in this order — **don't sta
 - Writing "as a senior consultant, I think…" instead of itemized faults (persona red line)
 - Filling only two of the five lenses, or writing "no issues found" in each (box-ticking red-team)
 - Finding faults but recording no arbitration/revision, shipping the conclusion unchanged; passing a red-team table off as external validation (self-grading ≠ external validation)
+- Firing the decision gate for a trivial task or single-turn Q&A (violates M1 and tactic 06 — process heavier than the work)
+- Inventing a "deep question" in S0 when the scan found no recurring pattern (fabrication — violates 03)
+- Baking the decision block into the template, turning an on-demand trigger into a sixth every-run gate
+- Slipping "but overall it's still worth doing" into the devil's-advocate phase, or writing "both sides have a point" in the judgment (sycophancy / forced 50/50)
+- Letting the AI decide for the human ("so you should do X") — crosses tactic 10
+- Writing unobservable reversal conditions like "depends on the situation / if risk grows" (can't be scheduled or monitored)
 
 ---
 
@@ -318,9 +366,12 @@ If context is lost or the session changed, recover in this order — **don't sta
 - `scripts/pstack.py` — **Emperor Team orchestration engine** (executable org-layer kernel: init / hire / onboard / dispatch / handoff / capture / reuse / review / verify / status)
 - `scripts/verify_team.py` — team hard gate (3–5 roles, three talents, duty contracts, identity isolation, restate confirmation)
 - `scripts/gates.py` — **V0.0.6 double gate** (clarify entrance four-part closure / council exit five lenses + arbitration / verify / seed)
+- `scripts/decision.py` — **V0.0.7 decision gate** (scan cross-session signals / init idempotent append / verify five-section hard gate, off by default)
+- `assets/templates/decision-block.md` — S0–R block template (appended on demand; three-file structure unchanged)
 - `assets/templates/` — blank templates for the three files (task_plan carries "0. Ambition upgrade" + "0.1 Reverse questioning"; progress carries "Council red-team")
 - `assets/prompts/reverse-questions.md` — ask-first prompt (full + short form, reconciling with tactic 06)
 - `assets/prompts/council.md` — five-lens council prompt (full + short form, "review lens ≠ persona" red line)
+- `assets/prompts/decision.md` — **merged version** of the two high-value prompts (full + short form, trigger threshold, two red lines)
 - `references/tactics.md` — deep dive on the 10 tactics (for human and agent to read together)
 - `references/memory-protocol.md` — three-file protocol and recovery flow
 - `references/communication.md` — Grice's four maxims (communication layer, with a copy-paste prompt snippet)
@@ -328,6 +379,7 @@ If context is lost or the session changed, recover in this order — **don't sta
 - `references/ambition.md` — height / depth / breadth deep dive (ambition layer, with three paste-ready templates and the role-conflict reconciliation)
 - `references/emperor-team.md` — Emperor Team deep dive (org layer: three tiers / three talents, seven-practice mapping, recursive delegation, duty contract ≠ persona, agent-executable protocol)
 - `references/clarify-council.md` — V0.0.6 double-gate deep dive (two conflict reconciliations, field spec, mapping to all seven layers, agent protocol, anti-patterns)
+- `references/decision-gate.md` — V0.0.7 decision-gate deep dive (two reconciliations, cross-directory scan, field spec, mapping to all seven layers, anti-patterns)
 
 ---
 
@@ -339,6 +391,7 @@ If context is lost or the session changed, recover in this order — **don't sta
 4. Did I ask for a **real outcome**, or just a surface task? (ambition · height)
 5. Before starting, did I ask the **right** ambiguities once — and close every one of them? (reverse questioning)
 6. Before delivering, did all **five lenses** produce verifiable items, and did the arbitration actually change the conclusion? (council)
+7. At a high-stakes fork, did I look for the question I've been avoiding — and did I state which side's evidence prevails plus what would flip it? (decision gate)
 
 ---
 

@@ -1,15 +1,17 @@
 ---
 name: cht-best-skill
-description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk, enforces an ambition-upgrade gate (height/depth/breadth of the goal), an ask-first clarify gate and a 5-lens council red-team gate (gates.py), can spin up a 3-5 role Emperor Team orchestration engine (pstack: hire/dispatch/handoff/capture/review/verify), and applies 10 agent-collaboration tactics, Grice-style communication and multi-AI debate verification. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / AI 辩论 / 交叉核验 / 核实 AI 答案 / 野心升级 / 高度深度广度 / 帝王团队 / AI 人事 / 造 AI 员工 / 搭班子 / pstack / 编排 AI 团队 / 三才 / 张良韩信萧何 / 反向提问 / 先问清再干 / 别脑补 / 智囊团 / 5 位顾问 / 五视角 / 内部排雷 / 挑错 / 追问本质 / How to be more ambitious / planning with files」时使用。"
+description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk, enforces an ambition-upgrade gate (height/depth/breadth of the goal), an ask-first clarify gate and a 5-lens council red-team gate (gates.py), can spin up a 3-5 role Emperor Team orchestration engine (pstack: hire/dispatch/handoff/capture/review/verify), can open an on-demand decision gate (meta-level reframe + three-stage adversarial arbitration + reversal conditions), and applies 10 agent-collaboration tactics, Grice-style communication and multi-AI debate verification. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / AI 辩论 / 交叉核验 / 核实 AI 答案 / 野心升级 / 高度深度广度 / 帝王团队 / AI 人事 / 造 AI 员工 / 搭班子 / pstack / 编排 AI 团队 / 三才 / 张良韩信萧何 / 反向提问 / 先问清再干 / 别脑补 / 智囊团 / 5 位顾问 / 五视角 / 内部排雷 / 挑错 / 追问本质 / 自我觉察 / 没问出口 / 绕着走 / 重大决策 / 反方论证 / 反转条件 / 不可逆成本 / 机会成本 / 决策关 / How to be more ambitious / planning with files」时使用。"
 ---
 
 # Agent Playbook
 
-> 版本 **V0.0.6** · 全局技能 `cht-best-skill`
+> 版本 **V0.0.7** · 全局技能 `cht-best-skill`
 
 一套系统的七层：**心法管怎么指挥、三文件管怎么记住、沟通层管怎么说、辩论层管怎么验、野心层管敢要什么、帝王团队层管让一队 AI 真把活干出来、双闸门层管入口问清与出口排雷。**
 
 > 心法决定它做得多好，文件决定它记得多久，沟通决定它说得多准，辩论决定它可不可信，野心决定你敢不敢要一个真正的结果，**组织决定这个结果有没有人真去干，双闸门决定它有没有跑偏、有没有带病出门**。
+
+> 另有**一个按触发条件启用的决策关**（V0.0.7）：**不新增层**，只在高利害分叉点开火——先发现被绕开的真问题，再做正反裁决与反转条件监控。
 
 ## 什么时候用
 
@@ -22,6 +24,7 @@ description: "Use when a task is multi-step, long-running, or must survive conte
 - 用户提到心法、Agent 用到极致、planning with files
 - 用户要"造 AI 员工 / 搭班子 / 帝王团队 / pstack / 让 AI 自己找人干活"——**启用组织层**
 - 用户要"先问清再干 / 别脑补 / 反向提问 / 智囊团 / 5 位顾问 / 内部排雷"——**启用双闸门层**
+- 用户面临高利害分叉（要不要做 / 选哪条路 / 不可逆成本），或说"我在纠结 / 总觉得哪里不对 / 又绕回来了"——**按需启用决策关**
 
 小问题、单轮问答、纯闲聊——**不要**启用，别给用户堆流程。
 
@@ -36,7 +39,7 @@ description: "Use when a task is multi-step, long-running, or must survive conte
 | **完整档**（三文件全开）| 跨会话 / 多步骤 / 需沉淀事实 | 跑 init 脚本，建 task_plan + findings + progress |
 | **组织档**（完整档 + 帝王团队）| 需要多个角色分工、递归招人、自动流转、技能沉淀、定期查岗 | 在完整档之上再跑 `pstack.py init`，按七条实操组团派活 |
 
-**决策依据**（四项任一不满足即降级）：边界清晰度 · 步骤数 · 是否跨会话 · 是否需事实沉淀。默认往轻里选——能不启就不启，能轻量不全量。**组织档是可选加层，琐碎任务绝不组团**（流程比活还重）。**双闸门层适用于完整档 / 组织档**：消除档与轻量档跳过两道闸门，别给单轮问答堆流程。
+**决策依据**（四项任一不满足即降级）：边界清晰度 · 步骤数 · 是否跨会话 · 是否需事实沉淀。默认往轻里选——能不启就不启，能轻量不全量。**组织档是可选加层，琐碎任务绝不组团**（流程比活还重）。**双闸门层适用于完整档 / 组织档**：消除档与轻量档跳过两道闸门，别给单轮问答堆流程。**决策关不在这四档里**，它是叠加在完整档/组织档之上的**按需扳机**：命中高利害分叉才开火，消除档/轻量档一律跳过。
 
 ## 野心升级（接活前置 · 每次必做 · 硬闸门）
 
@@ -131,6 +134,43 @@ python3 $P/gates.py seed    "<旧任务目录>"          # 老目录补齐区块
 
 详见 `references/clarify-council.md`；可直接粘贴的提示词在 `assets/prompts/reverse-questions.md` 与 `assets/prompts/council.md`。
 
+## 决策关（按触发条件启用 · 不新增第八层）
+
+> 两条高含金量提示词的**合并落点**：先发现被绕开的真问题（选对题），再对真问题做正反裁决与反转条件监控（做对决定）。
+> **它不是第八层，也不是第六道「每次必过」的闸门**——是一次按高利害分叉点触发的决策关，插在执行循环 0.3 / 4.5 步，不计入 ≤5 基元。**默认关闭，宁可少用。**
+
+**两条原提示词**：①「在我们反复讨论过的所有问题中，有没有一个更深层次的问题，是我一直在绕着它走，但一直没有真正问出口的？」②「化身为反方论证专家 / 决策漏洞审查员 / 中立裁判，三阶段：禁支持只反驳 → 支持理由 → 中立裁判直接说哪边占优、最大未知风险、什么条件下反转，拒绝五五开」。
+
+**合并后的五拍**：
+
+| 拍 | 做什么 | 落地 |
+|---|---|---|
+| **S0 元层回看** | `decision.py scan` 跨目录扫 `agent-tasks/*/` 的决策记录与 `[假设]`，找反复被否掉 / 反复返工 / 反复出现的假设 → 回答"是不是有个一直没问出口的真问题" | 若真问题变了，判定**继续 / 重构目标 / 终止**，回写 `task_plan.md`「3 边界 / 6 变更记录」 |
+| **S1 反方位** | 禁支持，六项：遗漏事实 / 过度乐观假设 / 不可逆成本 / 机会成本 / 最坏风险 / 情绪认知偏差 | 只许反驳条目，脚本拦截支持性措辞 |
+| **S2 支持位** | 该决定能成立的核心理由，带依据 | ≥1 条 |
+| **S3 裁判位** | 对比关键证据，明确哪边**证据占优**（反方 / 支持 / 需补证据 / 暂缓）+ 最大未知风险 | 禁「五五开 / 各有道理 / 难分伯仲」，且必须给明确倾向 |
+| **R 反转条件** | 「当 X 出现时，结论应反转为 Y」+ 监控方式 / 阈值 | 接心法 07 定时检查，条件命中主动通知 |
+
+**为什么合并**：分开会长成第 5、第 6 道闸门，加上现有 4 道共 6 道，流程比活还重（违反 M1 与心法 06）。合并后是**一次按需开火的扳机**——把三文件记忆、辩论层、定时任务三处已有能力串起来。全库检索确认：七层里原本**完全没有**不可逆成本 / 机会成本 / 认知偏差 / 反转条件 / 被回避的根本问题。
+
+**两处调和**：
+
+> ① **论证位 ≠ 人设**（第四次复用 V0.0.3 → 0.0.6 那条逻辑）：「反方论证专家」是**输出契约**，不是抬高权威的形容词人设；这条提示词自带「禁止支持我」「拒绝五五开」，是在**压**讨好属性，和黄仁勋法同一战线。招的是位子，不是演员。
+> ② **证据优势判断 ≠ 替人拍板**：V0.0.3 要人自己裁决、保持不偏袒；本关要 AI **明确说哪边占优**。差异是真的——AI 只给证据优势判断 + 最大未知风险 + 反转条件，心法 10 的决断权仍在人。
+
+**触发门槛**（满足任一才跑，消除档 / 轻量档一律跳过）：不可逆成本高（对外承诺 / 发版 / 花钱 / 删数据 / 签约）· 跨会话反复讨论 ≥2 次或返工 ≥2 次 · 用户说「我在纠结 / 要不要 / 又绕回来了」· 方向性选择而非执行细节。
+
+```bash
+P=~/.codebuddy/skills/cht-best-skill/scripts
+python3 $P/decision.py scan "<agent-tasks 父目录>"      # S0 素材：跨会话反复信号
+python3 $P/decision.py init "<本任务目录>"              # 幂等追加 S0–R 区块（模板不内置 → 未触发零负担）
+python3 $P/decision.py verify "<本任务目录>" --required || exit 1
+```
+
+> 区块不存在时 `verify` 默认放行（视为未启用）；`--required` 是显式声明"本次高利害"，缺区块即阻断。**触发了才必须有区块，有区块就必须填完。**
+
+详见 `references/decision-gate.md`；可直接粘贴的合并版提示词在 `assets/prompts/decision.md`。
+
 ## 第一步：把记忆落到磁盘
 
 ```bash
@@ -212,6 +252,7 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 | 09 记录即记忆 | 三文件替代易失的对话历史 |
 | 反向提问（V0.0.6 入口） | `task_plan.md`「0.1」四段闭环 |
 | 智囊团排雷（V0.0.6 出口） | `progress.md`「智囊团排雷」5 镜头 + 裁决 |
+| 决策关（V0.0.7 按需） | `progress.md` 决策记录 + S0–R 区块；`task_plan.md` 边界 / 变更记录 |
 
 ## 动作原语：六元操作词典（来自 M4 执行轴）
 
@@ -231,6 +272,7 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 
 0. **野心升级（前置）**：把浅层指令改写为高度/深度/广度三维度，填进 `task_plan.md`「0. 野心升级」，跑 `verify_ambition.py` 通过（退出码 0）才准往下走。消除档任务跳过此步。
 0.2. **反向提问（入口 · 每次必做）**：按 `assets/prompts/reverse-questions.md` 先自查、只对高杠杆模糊点批量问一次、逐条闭环（未答标 `[假设]`），填进 `task_plan.md`「0.1」，跑 `gates.py clarify` 通过才准往下走。消除档/轻量档跳过此步。
+0.3. **决策关（按触发条件启用）**：仅当命中高利害分叉才跑 `decision.py scan` → `init` → 填 S0–R → `verify --required`；若 S0 判定「重构目标 / 终止」，回写 `task_plan.md` 并按 M2 回炉砍任务。消除档 / 轻量档跳过，琐碎任务绝不启用；第 4 步换阶段遇到分叉时也可补跑（4.5）。
 0.5. **组团（组织档才做）**：需多角色分工时跑 `pstack.py init` → 填 `ONBOARDING.md` → `verify_team.py` 通过 → 张良拆分派工 → `handoff` 自动流转 → `capture` 沉淀 → `review` 查岗。琐碎任务不做。
 1. **接活**：复述目标与验收标准（02）；材料不够先要（03），别猜。
 2. **落盘**：跑 init 脚本，写 `task_plan.md` 的阶段。
@@ -239,7 +281,7 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 5. **交付**：先按 `assets/prompts/council.md` 用 5 镜头排雷并写进 `progress.md`，裁决与修订要真改到结论里；再给证据（05）、标注需人定稿的部分（10）、更新 progress 下一步。**交付前跑 `gates.py verify`（两道一起过）+ `verify_ambition.py`；组织档再跑 `verify_team.py`**。
 
 **两条硬约束**
-- **基元数 ≤5**：任一任务拆到不超过 5 个基元（第 0 / 0.2 / 0.5 步为前置闸门，不计入）；超过说明还有"补偿层"没消干净，回炉用 M2 思路继续砍。
+- **基元数 ≤5**：任一任务拆到不超过 5 个基元（第 0 / 0.2 / 0.3 / 0.5 步为前置或分叉闸门，不计入）；超过说明还有"补偿层"没消干净，回炉用 M2 思路继续砍。
 - **跨基元传递最小化**：中间产物可保留作校准点（纠偏锚点），但不在基元间堆文档、不反复交接；组织档一律走 `handoff`，**绝不人工搬运**。
 
 ## 中断了怎么接着干
@@ -275,6 +317,12 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 - 让 AI 写"作为资深顾问我认为……"的点评交差（角色扮演红线）
 - 5 个镜头只填 2 个、或每镜头一句"无明显问题"（形式主义排雷）
 - 挑出一堆毛病却没有裁决与修订，结论原样发出；拿排雷表冒充外部验证（自评 ≠ 外部验证）
+- 给琐碎任务、单轮问答也跑决策关（违反 M1 与心法 06，流程比活重）
+- S0 没扫出信号却硬编一个"深刻问题"交差（脑补，违反 03）
+- 模板里预置决策关区块，把它做成每次必过的第六道闸门（把按需扳机做成流程负担）
+- 反方位偷偷夹带「总体还是值得做」，或裁判位写「各有道理、难分伯仲」（讨好回潮 / 强行五五开）
+- 让 AI 替人拍板「所以你应该做 X」（越过心法 10 决断权）
+- 反转条件写「视情况而定 / 风险变大时」这类不可观测的话（接不上定时监控）
 
 ## 文件
 
@@ -283,8 +331,11 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 - `scripts/pstack.py` — **帝王团队编排引擎**（组织层可执行内核：init/hire/onboard/dispatch/handoff/capture/reuse/review/verify/status）
 - `scripts/verify_team.py` — 团队硬闸门（3-5 岗、三才齐备、职责契约、身份隔离、复述确认）
 - `scripts/gates.py` — **V0.0.6 双闸门**（clarify 入口四段闭环 / council 出口 5 镜头 + 裁决 / verify 总检 / seed 补齐旧目录）
+- `scripts/decision.py` — **V0.0.7 决策关**（scan 跨会话信号 / init 幂等追加 / verify 五段硬闸门，默认不启用）
+- `assets/templates/decision-block.md` — 决策关 S0–R 区块模板（按需追加，不改三文件结构）
 - `assets/prompts/reverse-questions.md` — 反向提问提示词（主版 + 短版，含与心法 06 的调和）
 - `assets/prompts/council.md` — 5 镜头智囊团提示词（主版 + 短版，含"审查镜头 ≠ 人设"红线）
+- `assets/prompts/decision.md` — 两条高含金量提示词的**合并版**（主版 + 短版 + 触发门槛 + 两条红线）
 - `assets/templates/` — 三个文件的空白模板（task_plan 内置「0. 野心升级」）
 - `references/tactics.md` — 10 条心法详解（给人和 Agent 共读）
 - `references/memory-protocol.md` — 三文件协议与恢复流程
@@ -293,3 +344,4 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 - `references/ambition.md` — 高度/深度/广度三维度详解（野心层，含三个通用模板与角色冲突调和）
 - `references/emperor-team.md` — 帝王团队详解（组织层：三层架构/三才、七条映射表、递归分工、职责契约≠人设、可执行协议）
 - `references/clarify-council.md` — V0.0.6 双闸门详解（两处冲突调和、字段规范、与七层咬合、Agent 协议、反模式）
+- `references/decision-gate.md` — V0.0.7 决策关详解（两处冲突调和、跨目录扫描原理、字段规范、与七层咬合、反模式）
