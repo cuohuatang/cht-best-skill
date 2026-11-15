@@ -1,12 +1,14 @@
 # cht-best-skill
 
-> Version **V0.0.7** · Global skill `cht-best-skill`
+> Version **V0.0.8** · Global skill `cht-best-skill`
 
 A system in seven layers: **tactics** govern how the agent takes direction, **three files** how it remembers, the **communication layer** how it speaks, the **debate layer** how claims get verified, the **ambition layer** how bold a result you dare to ask for, the **Emperor Team layer** how a *team of AIs* actually gets the work done, and the **ask-first / council double gate** how you stop it from drifting at the start or shipping a broken answer at the end.
 
 > Tactics decide how well it works; files decide how long it remembers; communication how precise it speaks; debate how trustworthy it is; ambition whether you dare ask for a real outcome — **organization decides whether anyone actually goes and does it, and the double gate decides whether it drifted or shipped a broken answer**.
 
 > There is also **one on-demand decision gate** (V0.0.7): **not an eighth layer**, fired only at high-stakes forks — surface the question you have been avoiding, then arbitrate the decision and monitor its reversal conditions.
+
+> There is also **a Step −1 input triage** (V0.0.8): **not an eighth layer, not a gate you pass every run** — the very first beat decides *whether this sentence should be optimized at all*. Five SKIP classes pass through verbatim, one character unchanged; only task-type requests get a lean general version and a high-end version.
 
 ---
 
@@ -19,7 +21,7 @@ This skill is for working with AI agents (CodeBuddy / Claude / Copilot-style age
 
 The 10 tactics come from Thorsten Ball (AMPCode engineering lead) and are reframed here as actions the agent should take, not slogans for the human to read.
 
-The skill is itself a product of the meta-skill system (M3 domain-load generation). V0.0.2 grafted three meta-skill lenses onto it: an **enablement gate** (M1), an **IPO primitive-chain constraint** (M2), and a **six-operation action lexicon** (M4). V0.0.3 added the **debate layer**. V0.0.4 added the **ambition layer** as a hard, script-enforced gate. **V0.0.5 adds the Emperor Team layer — an executable orchestration engine (`pstack.py`), not another essay**: team state on disk, handoffs by command, boundaries by a hard gate. **V0.0.6 adds the ask-first / council double gate** — two prompt assets baked into the three-file templates and enforced by `gates.py`, so ambiguities get closed before work starts and conclusions get red-teamed before delivery. **V0.0.7 merges two more high-value prompts into a single on-demand decision gate** (`decision.py`): a meta-level reframe of the avoided root question, three-stage adversarial arbitration, and observable reversal conditions — deliberately off by default.
+The skill is itself a product of the meta-skill system (M3 domain-load generation). V0.0.2 grafted three meta-skill lenses onto it: an **enablement gate** (M1), an **IPO primitive-chain constraint** (M2), and a **six-operation action lexicon** (M4). V0.0.3 added the **debate layer**. V0.0.4 added the **ambition layer** as a hard, script-enforced gate. **V0.0.5 adds the Emperor Team layer — an executable orchestration engine (`pstack.py`), not another essay**: team state on disk, handoffs by command, boundaries by a hard gate. **V0.0.6 adds the ask-first / council double gate** — two prompt assets baked into the three-file templates and enforced by `gates.py`, so ambiguities get closed before work starts and conclusions get red-teamed before delivery. **V0.0.7 merges two more high-value prompts into a single on-demand decision gate** (`decision.py`): a meta-level reframe of the avoided root question, three-stage adversarial arbitration, and observable reversal conditions — deliberately off by default. **V0.0.8 adds a Step −1 input triage** (`prompt_opt.py`): for people who can't write prompts, it classifies the input first — five SKIP classes pass through verbatim, only task-type requests produce two optimized versions.
 
 ---
 
@@ -35,6 +37,7 @@ Enable this skill if any of these is true:
 - The user wants to "hire AI employees / build a team / Emperor Team / pstack / let AIs recruit and delegate" — **enable the organization layer**
 - The user wants to "ask about ambiguities first / don't invent context / reverse questioning / a council of advisors / five perspectives / internal red-teaming" — **enable the double gate**
 - The user faces a high-stakes fork (should we do it / which path / irreversible cost), or says "I'm torn / something feels off / we're going in circles" — **fire the decision gate on demand**
+- The user says "I can't write prompts / optimize this prompt / which prompts must NOT be optimized / lean version + high-end version" — **run the Step −1 input triage**
 
 For small questions, single-turn Q&A, or pure chit-chat — **do not** enable this. Don't pile process on simple tasks.
 
@@ -51,9 +54,51 @@ For small questions, single-turn Q&A, or pure chit-chat — **do not** enable th
 | **Full** (all three files) | cross-session / multi-step / needs fact accumulation | run init script, build task_plan + findings + progress |
 | **Org tier** (Full + Emperor Team) | needs multiple roles, recursive hiring, auto handoff, skill capture, periodic review | additionally run `pstack.py init` and dispatch via the seven practices |
 
-**Decision basis** (any one unmet downgrades): boundary clarity · step count · cross-session? · needs fact accumulation. Default to the lighter tier — don't enable if you can avoid it, don't go full if light suffices. **The org tier is an optional add-on; never spin up a team for trivial tasks** (process heavier than the work). **The double gate applies to Full / Org tiers** — Eliminate and Light skip both, so single-turn Q&A never gets buried in process. **The decision gate is not one of these tiers**: it is an on-demand trigger stacked on Full / Org, fired only at a high-stakes fork and skipped entirely for Eliminate / Light.
+**Decision basis** (any one unmet downgrades): boundary clarity · step count · cross-session? · needs fact accumulation. Default to the lighter tier — don't enable if you can avoid it, don't go full if light suffices. **The org tier is an optional add-on; never spin up a team for trivial tasks** (process heavier than the work). **The double gate applies to Full / Org tiers** — Eliminate and Light skip both, so single-turn Q&A never gets buried in process. **The decision gate is not one of these tiers**: it is an on-demand trigger stacked on Full / Org, fired only at a high-stakes fork and skipped entirely for Eliminate / Light. **Step −1 triage comes before all four tiers**: SKIP classes are executed verbatim without even enabling the skill; only OPTIMIZE proceeds to tier selection.
 
 ---
+
+## Step −1: input triage & prompt optimization (the first step · on demand · V0.0.8)
+
+> For the user who wants an agent to work but can't write prompts: turn a rough sentence into a working prompt **before** the ambition upgrade.
+> **Not an eighth layer, not a sixth gate you pass every run** — it's a **classifier**: `classify` is pure text and runs before any file exists; on SKIP it **passes the input through verbatim, one character unchanged, no versions generated, no files written**.
+
+**The four things the meta-prompt asks for** (paste-ready, self-contained version in `assets/prompts/meta-prompt.md`, needs no skill installed): ① fill in unspoken implicit needs + a duty contract / style constraints / output format; ② produce **two versions**, a lean general one and a high-end one; ③ structured layout, no fluff, no chit-chat, no padding; ④ adapt to ChatGPT / Claude Code / Doubao / DeepSeek / Kimi / harness and every other agent, avoiding logical holes and invalid instructions.
+
+**But the user was explicit: not every input gets optimized.** Five hard-coded SKIP classes, enforced by `prompt_opt.py classify` rather than left to the model's discretion:
+
+| # | Never optimize | Examples | Why |
+|---|---|---|---|
+| S1 | Greetings & thanks | hi / thanks / got it / good morning | optimizing it only produces longer fluff |
+| S2 | Pure factual Q&A / translation / summarization | "what is GDP", "translate to English", "summarize this" | a light conversion has no implicit needs to fill |
+| S3 | Continuation edits | "continue", "make it blue", "a bit shorter", "same as above", "go with A" | the prior context already holds every constraint; regenerating would overturn settled work |
+| S4 | User named a skill or file | `@skill:xxx`, `/command`, an explicit path, "use this skill" | the execution path is already fixed |
+| S5 | Judgment only / explicit no-optimize | "is there a merge point?", "what do you think", "don't optimize" | the user wants a conclusion, not a prompt |
+
+**OPTIMIZE (task-type)**: assigning work / synthesis / generating / installing / fixing / converting / pushing / shipping / iterating / grafting / producing files — anything with a concrete deliverable or multiple steps. Ambiguous cases **always SKIP** (better to under-optimize; M1 Eliminate tier + tactic 06). Only an explicit "optimize this" or `--force` overrides.
+
+**Three reconciliations**:
+
+> ① **Role setting ≠ persona lines** (fifth reuse of the V0.0.3 → V0.0.7 logic): "you are a top-tier prompt architect" is a **temporary description of the optimizer's own function** and **must not appear in the delivered prompt**; the "role" becomes a **duty contract** (what to produce / acceptance criteria / out of scope). `verify` actually blocks "top-tier / senior / expert / master / embody / act as". We fill slots, not cast actors.
+> ② **Auto-filling ≠ fabrication** (tactic 03 / V0.0.6 reverse questioning): what gets filled are **modifiable assumptions**, each tagged `[hypothesis]` and persisted — never disguised as something the user said. **No interruption, no questions** (the user wants speed); those assumptions become the raw material for reverse-questioning section B, so only high-leverage ambiguities get asked in one batch. **Optimize the prompt, not the intent**: goal / scope / acceptance criteria are never rewritten.
+> ③ **"Adapt to every agent" ≠ invented adapter rules**: hard-coding private platform features produces exactly the **unverifiable invalid instructions** the prompt says to avoid. Strategy: unchanged general core + a few verifiable differences (`profiles` lists 5) + **unknown platforms always fall back to the general profile**.
+
+**The high-end version does not reinvent the wheel**: it wires straight into the ambition layer's **height / depth / breadth** and the communication layer's **four maxims** — V0.0.4 is already "turn a shallow instruction into an ambitious one"; this just injects it into the prompt earlier so step 0 gets better input.
+
+```bash
+P=~/.codebuddy/skills/cht-best-skill/scripts
+python3 $P/prompt_opt.py classify "<user input>"        # first beat: pure text, no directory needed
+#   VERDICT=SKIP      → execute verbatim, stop here (zero edits, zero files)
+#   VERDICT=OPTIMIZE  → continue:
+python3 $P/init_task.py "<task name>"
+python3 $P/prompt_opt.py init "<task dir>" --input "<user input, verbatim>"   # idempotent append of the "00" block
+python3 $P/prompt_opt.py verify "<task dir>" --required || exit 1
+python3 $P/prompt_opt.py profiles                      # list verifiable platform profiles
+```
+
+> **The block is not baked into the template** — only OPTIMIZE appends it to `task_plan.md`, **no fourth memory file**. `verify` passes when the block is absent; its nine-section check blocks: an S section classified SKIP, assumptions missing `[hypothesis]`, persona words in B, copy-pasted identical versions, V2 without the ambition triad, leftover placeholders. **Only trigger it when needed — but once triggered, it must be filled in completely.**
+
+Full breakdown: `references/prompt-optimization.md`.
 
 ## Ambition upgrade (pre-flight · mandatory every run · hard gate)
 
@@ -188,7 +233,7 @@ python3 $P/decision.py verify "<task dir>" --required || exit 1
 
 Full breakdown: `references/decision-gate.md`. Paste-ready merged prompt: `assets/prompts/decision.md`.
 
-## Step 1: Drop memory onto disk
+## Persisting memory: the three files
 
 ```bash
 python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<task name>" [--dir <working dir>]
@@ -242,6 +287,7 @@ Full breakdown and counter-examples are in `references/tactics.md`.
 | Reverse questioning (V0.0.6 entrance) | `task_plan.md` "0.1" four-part closure |
 | Council red-team (V0.0.6 exit) | `progress.md` "Council red-team" five lenses + arbitration |
 | Decision gate (V0.0.7 on demand) | `progress.md` decision log + S0–R block; `task_plan.md` boundaries / change log |
+| Step −1 input triage (V0.0.8 on demand) | `task_plan.md` "00" optimization block (OPTIMIZE only); SKIP writes zero files |
 
 ---
 
@@ -299,6 +345,7 @@ How it meshes: 03 governs **input** (give real context), debate governs **output
 
 > Grafted from the meta-skill system's M2 — restructure the task into an end-to-end IPO (Input→Process→Output) primitive chain, cutting the "human-limitation compensation layer".
 
+−1. **Input triage & prompt optimization (first step · on demand)**: run `prompt_opt.py classify "<user input>"`. SKIP → **pass through verbatim, one character unchanged, no files, stop here**; OPTIMIZE → `init_task.py` → `prompt_opt.py init --input "<input>"` → fill S/A/B/C/D/V1/V2/E/F → pass `verify --required` before step 0. **Default SKIP; err on optimizing less.** Fill-ins are tagged `[hypothesis]`; the high-end version wires into the ambition triad.
 0. **Ambition upgrade (pre-flight)**: rewrite the shallow request into height / depth / breadth, fill them into `task_plan.md` "0. Ambition upgrade", and pass `verify_ambition.py` (exit 0) before proceeding. Eliminate-tier tasks skip this step.
 0.2. **Reverse questioning (entrance · every run)**: follow `assets/prompts/reverse-questions.md` — self-check first, ask only high-leverage ambiguities in one batch, close every question (unanswered ones tagged `[hypothesis]`), fill `task_plan.md` "0.1", and pass `gates.py clarify`. Eliminate / Light tiers skip this.
 0.3. **Decision gate (on demand)**: only at a high-stakes fork — `decision.py scan` → `init` → fill S0–R → `verify --required`; if S0 rules "reframe the goal / stop", write back to `task_plan.md` and loop back with M2 thinking. Eliminate / Light tiers skip it; never for trivial tasks. May also run at 4.5 when a phase change hits a fork.
@@ -310,7 +357,7 @@ How it meshes: 03 governs **input** (give real context), debate governs **output
 5. **Deliver**: first red-team the answer through the five lenses per `assets/prompts/council.md` and write it into `progress.md`, making sure arbitration actually changes the conclusion; then give evidence (05), mark parts needing human sign-off (10), update progress's next steps. **Before delivery run `gates.py verify` (both gates) + `verify_ambition.py`; for org tier also `verify_team.py`.**
 
 **Two hard constraints**
-- **≤5 primitives**: any task breaks into at most 5 primitives (steps 0 / 0.2 / 0.3 / 0.5 are pre-flight or fork gates, not counted); more means a compensation layer is still untrimmed — loop back with M2 thinking and keep cutting.
+- **≤5 primitives**: any task breaks into at most 5 primitives (steps −1 / 0 / 0.2 / 0.3 / 0.5 are pre-flight or fork gates, not counted); more means a compensation layer is still untrimmed — loop back with M2 thinking and keep cutting.
 - **Minimize cross-primitive handoff**: intermediate artifacts may stay as calibration anchors, but don't pile docs between primitives or hand off repeatedly; in the org tier always use `handoff` — **never manual relay**.
 
 ---
@@ -356,6 +403,13 @@ If context is lost or the session changed, recover in this order — **don't sta
 - Slipping "but overall it's still worth doing" into the devil's-advocate phase, or writing "both sides have a point" in the judgment (sycophancy / forced 50/50)
 - Letting the AI decide for the human ("so you should do X") — crosses tactic 10
 - Writing unobservable reversal conditions like "depends on the situation / if risk grows" (can't be scheduled or monitored)
+- Generating two prompt versions for "thanks / continue / make it blue / is there a merge point?" (turning the classifier into a confirmation machine — violates M1 and tactic 06)
+- Quietly polishing or expanding a SKIP input, or adding "I optimized it for you" (rewriting the user's input without permission)
+- Writing "you are a top-tier prompt architect" into the delivered prompt (persona red line, fifth reuse)
+- Fill-ins without `[hypothesis]`, disguised as things the user said; changing the goal or scope under the guise of optimizing (fabrication / optimizing intent)
+- Copy-pasting the same text into both versions, or a "high-end" version that only adds adjectives without the ambition triad (box-ticking)
+- Inventing private plugin capabilities to "support every agent", or writing "be as detailed as possible" alongside "no padding" (self-inflicted invalid instructions)
+- Baking the optimization block into the template, turning an on-demand classifier into a sixth every-run gate
 
 ---
 
@@ -367,11 +421,14 @@ If context is lost or the session changed, recover in this order — **don't sta
 - `scripts/verify_team.py` — team hard gate (3–5 roles, three talents, duty contracts, identity isolation, restate confirmation)
 - `scripts/gates.py` — **V0.0.6 double gate** (clarify entrance four-part closure / council exit five lenses + arbitration / verify / seed)
 - `scripts/decision.py` — **V0.0.7 decision gate** (scan cross-session signals / init idempotent append / verify five-section hard gate, off by default)
+- `scripts/prompt_opt.py` — **V0.0.8 Step −1** (classify five SKIP classes verbatim / init idempotent append with verbatim archival / verify nine sections / profiles)
+- `assets/templates/prompt-opt-block.md` — "00" optimization block template (OPTIMIZE only; three-file structure unchanged)
 - `assets/templates/decision-block.md` — S0–R block template (appended on demand; three-file structure unchanged)
 - `assets/templates/` — blank templates for the three files (task_plan carries "0. Ambition upgrade" + "0.1 Reverse questioning"; progress carries "Council red-team")
 - `assets/prompts/reverse-questions.md` — ask-first prompt (full + short form, reconciling with tactic 06)
 - `assets/prompts/council.md` — five-lens council prompt (full + short form, "review lens ≠ persona" red line)
 - `assets/prompts/decision.md` — **merged version** of the two high-value prompts (full + short form, trigger threshold, two red lines)
+- `assets/prompts/meta-prompt.md` — **paste this to any AI**: the meta-prompt (self-contained no-optimize list + two versions + four things + two red lines + platform profiles)
 - `references/tactics.md` — deep dive on the 10 tactics (for human and agent to read together)
 - `references/memory-protocol.md` — three-file protocol and recovery flow
 - `references/communication.md` — Grice's four maxims (communication layer, with a copy-paste prompt snippet)
@@ -380,6 +437,7 @@ If context is lost or the session changed, recover in this order — **don't sta
 - `references/emperor-team.md` — Emperor Team deep dive (org layer: three tiers / three talents, seven-practice mapping, recursive delegation, duty contract ≠ persona, agent-executable protocol)
 - `references/clarify-council.md` — V0.0.6 double-gate deep dive (two conflict reconciliations, field spec, mapping to all seven layers, agent protocol, anti-patterns)
 - `references/decision-gate.md` — V0.0.7 decision-gate deep dive (two reconciliations, cross-directory scan, field spec, mapping to all seven layers, anti-patterns)
+- `references/prompt-optimization.md` — V0.0.8 deep dive (triage rule table, three reconciliations, mapping to all seven layers, field spec, anti-patterns)
 
 ---
 
@@ -392,6 +450,7 @@ If context is lost or the session changed, recover in this order — **don't sta
 5. Before starting, did I ask the **right** ambiguities once — and close every one of them? (reverse questioning)
 6. Before delivering, did all **five lenses** produce verifiable items, and did the arbitration actually change the conclusion? (council)
 7. At a high-stakes fork, did I look for the question I've been avoiding — and did I state which side's evidence prevails plus what would flip it? (decision gate)
+8. Before doing anything, did I check whether this input should be optimized at all — and leave SKIP classes completely untouched? (Step −1 triage)
 
 ---
 

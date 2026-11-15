@@ -1,17 +1,19 @@
 ---
 name: cht-best-skill
-description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md) on disk, enforces an ambition-upgrade gate (height/depth/breadth of the goal), an ask-first clarify gate and a 5-lens council red-team gate (gates.py), can spin up a 3-5 role Emperor Team orchestration engine (pstack: hire/dispatch/handoff/capture/review/verify), can open an on-demand decision gate (meta-level reframe + three-stage adversarial arbitration + reversal conditions), and applies 10 agent-collaboration tactics, Grice-style communication and multi-AI debate verification. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / AI 辩论 / 交叉核验 / 核实 AI 答案 / 野心升级 / 高度深度广度 / 帝王团队 / AI 人事 / 造 AI 员工 / 搭班子 / pstack / 编排 AI 团队 / 三才 / 张良韩信萧何 / 反向提问 / 先问清再干 / 别脑补 / 智囊团 / 5 位顾问 / 五视角 / 内部排雷 / 挑错 / 追问本质 / 自我觉察 / 没问出口 / 绕着走 / 重大决策 / 反方论证 / 反转条件 / 不可逆成本 / 机会成本 / 决策关 / How to be more ambitious / planning with files」时使用。"
+description: "Use when a task is multi-step, long-running, or must survive context resets — sets up a three-file memory system (task_plan.md / findings.md / progress.md), enforces ambition + clarify + council hard gates (verify_ambition.py, gates.py), spins up a 3-5 role Emperor Team (pstack.py), opens an on-demand decision gate (decision.py), runs a Step -1 input triage (prompt_opt.py: 5 SKIP classes pass verbatim; task-type prompts get lean + high-end versions), and applies 10 collaboration tactics, Grice-style communication and multi-AI debate verification. 当任务复杂多步、跨会话、需要长期记忆，或用户提到「心法 / 把 Agent 用到极致 / 任务计划 / 长期记忆 / AI 辩论 / 交叉核验 / 核实 AI 答案 / 野心升级 / 高度深度广度 / 帝王团队 / AI 人事 / 造 AI 员工 / 搭班子 / pstack / 编排 AI 团队 / 三才 / 张良韩信萧何 / 反向提问 / 先问清再干 / 别脑补 / 智囊团 / 5 位顾问 / 五视角 / 内部排雷 / 挑错 / 追问本质 / 自我觉察 / 没问出口 / 绕着走 / 重大决策 / 反方论证 / 反转条件 / 不可逆成本 / 机会成本 / 决策关 / 不会写提示词 / 提示词架构师 / 优化提示词 / 哪些提示词不能优化 / 先分流 / 精简通用版 / 高阶顶配版 / 适配所有 Agent / How to be more ambitious / planning with files」时使用。"
 ---
 
 # Agent Playbook
 
-> 版本 **V0.0.7** · 全局技能 `cht-best-skill`
+> 版本 **V0.0.8** · 全局技能 `cht-best-skill`
 
 一套系统的七层：**心法管怎么指挥、三文件管怎么记住、沟通层管怎么说、辩论层管怎么验、野心层管敢要什么、帝王团队层管让一队 AI 真把活干出来、双闸门层管入口问清与出口排雷。**
 
 > 心法决定它做得多好，文件决定它记得多久，沟通决定它说得多准，辩论决定它可不可信，野心决定你敢不敢要一个真正的结果，**组织决定这个结果有没有人真去干，双闸门决定它有没有跑偏、有没有带病出门**。
 
 > 另有**一个按触发条件启用的决策关**（V0.0.7）：**不新增层**，只在高利害分叉点开火——先发现被绕开的真问题，再做正反裁决与反转条件监控。
+
+> 另有**一个 Step −1 输入分流器**（V0.0.8）：**不新增层、不每次必过**——接活第一拍先判断「这句话该不该优化提示词」。SKIP 五类原样透传、一个字不改；只有任务型才生成精简通用版 + 高阶顶配版。
 
 ## 什么时候用
 
@@ -25,6 +27,7 @@ description: "Use when a task is multi-step, long-running, or must survive conte
 - 用户要"造 AI 员工 / 搭班子 / 帝王团队 / pstack / 让 AI 自己找人干活"——**启用组织层**
 - 用户要"先问清再干 / 别脑补 / 反向提问 / 智囊团 / 5 位顾问 / 内部排雷"——**启用双闸门层**
 - 用户面临高利害分叉（要不要做 / 选哪条路 / 不可逆成本），或说"我在纠结 / 总觉得哪里不对 / 又绕回来了"——**按需启用决策关**
+- 用户说"不会写提示词 / 帮我优化这段提示词 / 哪些提示词不能优化 / 精简通用版 + 高阶顶配版"——**走 Step −1 输入分流**
 
 小问题、单轮问答、纯闲聊——**不要**启用，别给用户堆流程。
 
@@ -39,7 +42,49 @@ description: "Use when a task is multi-step, long-running, or must survive conte
 | **完整档**（三文件全开）| 跨会话 / 多步骤 / 需沉淀事实 | 跑 init 脚本，建 task_plan + findings + progress |
 | **组织档**（完整档 + 帝王团队）| 需要多个角色分工、递归招人、自动流转、技能沉淀、定期查岗 | 在完整档之上再跑 `pstack.py init`，按七条实操组团派活 |
 
-**决策依据**（四项任一不满足即降级）：边界清晰度 · 步骤数 · 是否跨会话 · 是否需事实沉淀。默认往轻里选——能不启就不启，能轻量不全量。**组织档是可选加层，琐碎任务绝不组团**（流程比活还重）。**双闸门层适用于完整档 / 组织档**：消除档与轻量档跳过两道闸门，别给单轮问答堆流程。**决策关不在这四档里**，它是叠加在完整档/组织档之上的**按需扳机**：命中高利害分叉才开火，消除档/轻量档一律跳过。
+**决策依据**（四项任一不满足即降级）：边界清晰度 · 步骤数 · 是否跨会话 · 是否需事实沉淀。默认往轻里选——能不启就不启，能轻量不全量。**组织档是可选加层，琐碎任务绝不组团**（流程比活还重）。**双闸门层适用于完整档 / 组织档**：消除档与轻量档跳过两道闸门，别给单轮问答堆流程。**决策关不在这四档里**，它是叠加在完整档/组织档之上的**按需扳机**：命中高利害分叉才开火，消除档/轻量档一律跳过。**Step −1 输入分流比四档更早**：SKIP 五类直接原样执行，连技能都不必启用；只有 OPTIMIZE 才进入档位判定。
+
+## Step −1：输入分流与提示词优化（第一步 · 条件触发 · V0.0.8）
+
+> 用户「想用 Agent 干活但不会写提示词」时，先把一句糙话变成能干活的提示词，**再**进野心升级。
+> **不新增第八层、不做第六道「每次必过」的闸门**——是**分流器**：`classify` 是纯文本操作，建任何文件之前就能跑；SKIP 时**原样透传，一个字不改、不生成任何版本、不落任何文件**。
+
+**用户给的元提示词四件事**（可直接复制版见 `assets/prompts/meta-prompt.md`，自带分流规则，不依赖本技能）：① 补齐没说出口的隐性需求 + 职责契约 / 风格约束 / 输出格式；② 出**精简通用版**与**高阶顶配版**两个版本；③ 结构化排版，不废话、不闲聊、不凑字数；④ 适配 ChatGPT / Claude Code / 豆包 / DeepSeek / Kimi / harness 等所有 Agent，规避逻辑漏洞与无效指令。
+
+**但用户特别强调：不是所有输入都优化。** 硬编码五类 SKIP（`prompt_opt.py classify` 强制执行，不靠 AI 自觉）：
+
+| # | 禁止优化 | 例子 | 为什么 |
+|---|---|---|---|
+| S1 | 寒暄致谢 | 你好 / 谢谢 / 辛苦了 / 收到 | 优化只会得到更长的废话 |
+| S2 | 纯事实问答 / 翻译 / 摘要 | "GDP 是什么"、"译成英文"、"摘要一下" | 轻量转换没有隐性需求可补 |
+| S3 | 延续性修改 | 继续 / 换成蓝色 / 再短一点 / 同上 / 「落地A」这类方案编号短指令 | 上文已有全部约束，重生成会推翻已定稿内容 |
+| S4 | 已点名技能或文件 | `@skill:xxx`、`/命令`、明确路径、"用这个技能" | 用户已把执行路径定死 |
+| S5 | 只要判断不要优化 | "有合并嫁接点吗"、"你怎么看"、"不要优化" | 要的是结论，不是一份提示词 |
+
+**OPTIMIZE（任务型）**：下任务 / 归纳总结 / 生成 / 安装 / 修复 / 转换 / 推送 / 落地 / 迭代 / 嫁接 / 产出文件等**有明确产出物或多步骤**的输入。判定模糊**一律 SKIP**（宁可少优化，M1 消除档 + 心法 06）；用户显式说「优化这段」或 `--force` 才强制。
+
+**三处调和**：
+
+> ① **角色设定 ≠ 人设台词**（第五次复用 V0.0.3 → 0.0.7 那条逻辑）：原提示词「你现在是顶级的 AI 提示词架构师」是**优化器自己的临时职能描述**，**不得写进交付产物**；产物里的"角色设定"落地为**职责契约**（要产出什么 / 验收标准 / 不做什么）。`verify` 真拦「顶级 / 资深 / 专家 / 大师 / 化身 / 扮演」。招的是位子，不是演员。
+> ② **自动补齐 ≠ 脑补**（心法 03 / V0.0.6 反向提问）：补的是**可修改的假设**，逐条标 `[假设]` 并落盘，不伪装成用户说过的话；**不打断、不追问**（用户要省时间），这些假设正好成为反向提问 B 段素材，只有「不问就会跑偏」的高杠杆项才批量问人。**优化提示词，不优化意图**：目标 / 范围 / 验收标准一律不改写。
+> ③ **适配所有 Agent ≠ 编造适配规则**：为"所有平台"硬编码私有特性，产出的恰恰是**无法验证的无效指令**。策略是通用内核不变 + 少数可验证差异（`profiles` 列 5 档）+ **未知平台一律回退通用档**。
+
+**高阶顶配版不另起炉灶**：直接接野心层**高度/深度/广度**与沟通层**四准则**——V0.0.4 本来就是"把浅层指令变高阶指令"，这里只是提前注入提示词，让第 0 步拿到更好的输入。
+
+```bash
+P=~/.codebuddy/skills/cht-best-skill/scripts
+python3 $P/prompt_opt.py classify "<用户原文>"        # 第一拍：纯文本，无需目录
+#   VERDICT=SKIP      → 原样执行，到此为止（零改动零文件）
+#   VERDICT=OPTIMIZE  → 继续：
+python3 $P/init_task.py "<任务名>"
+python3 $P/prompt_opt.py init "<任务目录>" --input "<用户原文（逐字）>"   # 幂等追加「00」区块
+python3 $P/prompt_opt.py verify "<任务目录>" --required || exit 1
+python3 $P/prompt_opt.py profiles                     # 查可验证的平台档位
+```
+
+> **模板不内置优化区块**——只有 OPTIMIZE 才 `init` 追加到 `task_plan.md`，**不新增第四个文件**。`verify` 无区块默认放行；九段校验会拦：S 段分类写成 SKIP、隐性需求没标 `[假设]`、B 段出现人设词、两版正文复制粘贴、V2 没接野心层三维、占位符残留。**触发了才必须有区块，有区块就必须填完。**
+
+详见 `references/prompt-optimization.md`。
 
 ## 野心升级（接活前置 · 每次必做 · 硬闸门）
 
@@ -171,7 +216,7 @@ python3 $P/decision.py verify "<本任务目录>" --required || exit 1
 
 详见 `references/decision-gate.md`；可直接粘贴的合并版提示词在 `assets/prompts/decision.md`。
 
-## 第一步：把记忆落到磁盘
+## 记忆落盘：三文件怎么建
 
 ```bash
 python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [--dir <工作目录>]
@@ -253,6 +298,7 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 | 反向提问（V0.0.6 入口） | `task_plan.md`「0.1」四段闭环 |
 | 智囊团排雷（V0.0.6 出口） | `progress.md`「智囊团排雷」5 镜头 + 裁决 |
 | 决策关（V0.0.7 按需） | `progress.md` 决策记录 + S0–R 区块；`task_plan.md` 边界 / 变更记录 |
+| Step −1 输入分流（V0.0.8 条件触发） | `task_plan.md`「00」优化区块（仅 OPTIMIZE 追加）；SKIP 零文件 |
 
 ## 动作原语：六元操作词典（来自 M4 执行轴）
 
@@ -270,6 +316,7 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 
 > 嫁接自元技能系统的 M2 工作流重构——把任务重整为端到端 IPO（输入→处理→输出）基元链，砍掉"人的局限补偿层"。
 
+−1. **输入分流与提示词优化（第一步 · 条件触发）**：先跑 `prompt_opt.py classify "<用户原文>"`。SKIP 五类 → **原样透传，一个字不改、不落文件、到此为止**；OPTIMIZE → `init_task.py` → `prompt_opt.py init --input "<原文>"` 追加「00」区块 → 填 S/A/B/C/D/V1/V2/E/F → `verify --required` 通过才进第 0 步。**默认 SKIP，宁可少优化**；补齐项逐条标 `[假设]`，高阶版接野心层三维。
 0. **野心升级（前置）**：把浅层指令改写为高度/深度/广度三维度，填进 `task_plan.md`「0. 野心升级」，跑 `verify_ambition.py` 通过（退出码 0）才准往下走。消除档任务跳过此步。
 0.2. **反向提问（入口 · 每次必做）**：按 `assets/prompts/reverse-questions.md` 先自查、只对高杠杆模糊点批量问一次、逐条闭环（未答标 `[假设]`），填进 `task_plan.md`「0.1」，跑 `gates.py clarify` 通过才准往下走。消除档/轻量档跳过此步。
 0.3. **决策关（按触发条件启用）**：仅当命中高利害分叉才跑 `decision.py scan` → `init` → 填 S0–R → `verify --required`；若 S0 判定「重构目标 / 终止」，回写 `task_plan.md` 并按 M2 回炉砍任务。消除档 / 轻量档跳过，琐碎任务绝不启用；第 4 步换阶段遇到分叉时也可补跑（4.5）。
@@ -281,7 +328,7 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 5. **交付**：先按 `assets/prompts/council.md` 用 5 镜头排雷并写进 `progress.md`，裁决与修订要真改到结论里；再给证据（05）、标注需人定稿的部分（10）、更新 progress 下一步。**交付前跑 `gates.py verify`（两道一起过）+ `verify_ambition.py`；组织档再跑 `verify_team.py`**。
 
 **两条硬约束**
-- **基元数 ≤5**：任一任务拆到不超过 5 个基元（第 0 / 0.2 / 0.3 / 0.5 步为前置或分叉闸门，不计入）；超过说明还有"补偿层"没消干净，回炉用 M2 思路继续砍。
+- **基元数 ≤5**：任一任务拆到不超过 5 个基元（第 −1 / 0 / 0.2 / 0.3 / 0.5 步为前置或分叉闸门，不计入）；超过说明还有"补偿层"没消干净，回炉用 M2 思路继续砍。
 - **跨基元传递最小化**：中间产物可保留作校准点（纠偏锚点），但不在基元间堆文档、不反复交接；组织档一律走 `handoff`，**绝不人工搬运**。
 
 ## 中断了怎么接着干
@@ -323,6 +370,13 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 - 反方位偷偷夹带「总体还是值得做」，或裁判位写「各有道理、难分伯仲」（讨好回潮 / 强行五五开）
 - 让 AI 替人拍板「所以你应该做 X」（越过心法 10 决断权）
 - 反转条件写「视情况而定 / 风险变大时」这类不可观测的话（接不上定时监控）
+- 给「谢谢 / 继续 / 换成蓝色 / 有合并嫁接点吗」也生成两版提示词（分流器做成确认机器，违反 M1 / 心法 06）
+- SKIP 类输入被悄悄润色、扩写，或加一句「我帮你优化了一下」（越权改写用户输入）
+- 把「你现在是顶级提示词架构师」写进交付产物（人设红线，第五次复用）
+- 自动补齐项不标 `[假设]`、伪装成用户说过的话；借优化之名改目标加需求（脑补 / 优化意图）
+- 两版复制粘贴同一份，或高阶版只多加形容词却不接野心层三维（形式主义顶配）
+- 为「适配所有 Agent」编造私有插件能力，或写「尽可能详细」与「不凑字数」自相矛盾（自造无效指令）
+- 优化区块内置进模板，做成每次必过的第六道闸门（把按需分流做成流程负担）
 
 ## 文件
 
@@ -332,10 +386,13 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 - `scripts/verify_team.py` — 团队硬闸门（3-5 岗、三才齐备、职责契约、身份隔离、复述确认）
 - `scripts/gates.py` — **V0.0.6 双闸门**（clarify 入口四段闭环 / council 出口 5 镜头 + 裁决 / verify 总检 / seed 补齐旧目录）
 - `scripts/decision.py` — **V0.0.7 决策关**（scan 跨会话信号 / init 幂等追加 / verify 五段硬闸门，默认不启用）
+- `scripts/prompt_opt.py` — **V0.0.8 Step −1**（classify 五类 SKIP 原样透传 / init 幂等追加并逐字留档 / verify 九段 / profiles 平台档位）
+- `assets/templates/prompt-opt-block.md` — 优化「00」区块模板（仅 OPTIMIZE 追加，不改三文件结构）
 - `assets/templates/decision-block.md` — 决策关 S0–R 区块模板（按需追加，不改三文件结构）
 - `assets/prompts/reverse-questions.md` — 反向提问提示词（主版 + 短版，含与心法 06 的调和）
 - `assets/prompts/council.md` — 5 镜头智囊团提示词（主版 + 短版，含"审查镜头 ≠ 人设"红线）
 - `assets/prompts/decision.md` — 两条高含金量提示词的**合并版**（主版 + 短版 + 触发门槛 + 两条红线）
+- `assets/prompts/meta-prompt.md` — **可直接复制给任何 AI** 的元提示词（自带禁优化清单 + 两版 + 四件事 + 两条红线 + 平台档位）
 - `assets/templates/` — 三个文件的空白模板（task_plan 内置「0. 野心升级」）
 - `references/tactics.md` — 10 条心法详解（给人和 Agent 共读）
 - `references/memory-protocol.md` — 三文件协议与恢复流程
@@ -345,3 +402,4 @@ python3 ~/.codebuddy/skills/cht-best-skill/scripts/init_task.py "<任务名>" [-
 - `references/emperor-team.md` — 帝王团队详解（组织层：三层架构/三才、七条映射表、递归分工、职责契约≠人设、可执行协议）
 - `references/clarify-council.md` — V0.0.6 双闸门详解（两处冲突调和、字段规范、与七层咬合、Agent 协议、反模式）
 - `references/decision-gate.md` — V0.0.7 决策关详解（两处冲突调和、跨目录扫描原理、字段规范、与七层咬合、反模式）
+- `references/prompt-optimization.md` — V0.0.8 详解（分流规则表、三处冲突调和、与七层咬合、字段规范、反模式）

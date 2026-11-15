@@ -4,6 +4,11 @@
 - 状态：进行中
 - 工作目录：`{{DIR}}`
 
+> **Step −1 · 输入分流（V0.0.8 · 条件触发）**：先跑 `python3 ~/.codebuddy/skills/cht-best-skill/scripts/prompt_opt.py classify "<用户原文>"`。
+> 判 **SKIP**（寒暄致谢 / 纯事实问答·翻译·摘要 / 延续性修改 / 已点名技能或文件 / 只要判断）→ **原样透传，一个字不改，本文件不应出现「00 提示词优化」区块**。
+> 判 **OPTIMIZE**（生成 / 修复 / 安装 / 转换 / 推送 / 归纳总结 / 产出文件等任务型）→ 跑 `prompt_opt.py init <本目录> --input "<原文>"` 追加「00」区块，填完并过 `verify --required` 再进「0. 野心升级」。
+> 本模板**不内置**优化区块，保证 SKIP 零负担。
+
 ## 0. 野心升级（接活前置 · 必填）
 
 > 依据 Claude 技术负责人《How to be more ambitious: A tutorial for humans with models》：**高度定结果、深度挖细节、广度补盲区**。

@@ -105,7 +105,17 @@ def main() -> int:
     print(f"  - 定稿校验：python3 {dec} verify \"{task_dir}\" --required")
     print("  消除档 / 轻量档跳过，别给琐碎任务堆流程。")
 
-    print("\n下一步：① 野心升级 → ② 反向提问批量问清并逐条闭环 → ③ 填目标与验收标准 → 开工；交付前补 5 镜头排雷与裁决。")
+    # V0.0.8：Step −1 输入分流，纯文本操作，本应在建目录之前就跑；此处补提示，不强制
+    opt = SKILL_ROOT / "scripts" / "prompt_opt.py"
+    print("\n[V0.0.8 Step −1 输入分流] 接活第一步：先判该不该优化提示词（不是所有输入都优化）:")
+    print(f"  - 分流：python3 {opt} classify \"<用户原文>\"")
+    print("  - SKIP（寒暄致谢 / 纯事实问答·翻译·摘要 / 延续性修改 / 已点名技能或文件 / 只要判断）→ 原样透传，零改动零文件")
+    print("  - OPTIMIZE（生成 / 修复 / 安装 / 转换 / 推送 / 归纳总结 / 产出文件等任务型）才继续：")
+    print(f"      python3 {opt} init \"{task_dir}\" --input \"<用户原文>\"")
+    print(f"      python3 {opt} verify \"{task_dir}\" --required")
+    print("  判定模糊一律 SKIP；不强制，别给单轮问答堆流程。")
+
+    print("\n下一步：① Step −1 分流（SKIP 就直接原样执行）→ ② 野心升级 → ③ 反向提问批量问清并逐条闭环 → ④ 填目标与验收标准 → 开工；交付前补 5 镜头排雷与裁决。")
     return 0
 
 
